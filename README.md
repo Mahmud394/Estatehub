@@ -1,92 +1,232 @@
+# 🏡 EstateHub — Smart Real Estate Marketplace
 
-EstateHub — Smart Real Estate Marketplace
-1. Introduction
-EstateHub is an AI-powered real estate platform that helps clients find suitable properties and connects them with brokers. Clients can search properties by location, price, size, and type, while brokers can post and manage property listings. The AI assistant understands client requirements in natural language and recommends matching or similar properties from the available database.
+**EstateHub** is an AI-powered real estate marketplace designed to help clients find suitable properties and connect directly with brokers. The platform provides property listings, advanced search and filtering, user communication, and an AI assistant that understands natural-language requirements and recommends matching properties.
 
-1.1 Background Overview
-The real estate sector has many property listings, but finding a suitable property can be time-consuming. Most existing platforms mainly depend on manual search and filters. AI can improve this process by understanding user requirements and providing personalized property recommendations.
+## 📌 Project Overview
 
-1.2 Problem Statement
-Clients often need to search through many property listings to find a suitable one. Existing systems may require users to manually select multiple filters and may not provide personalized recommendations. EstateHub will reduce this effort by using AI to understand client requirements and find suitable properties from the database.
+Finding the right property can be time-consuming when users need to browse numerous listings and manually apply multiple filters. EstateHub aims to simplify this process by combining a modern real estate marketplace with AI-powered property recommendations.
 
-1.3 Objectives
-  ●	General Objective: To develop a user-friendly real estate platform for searching, posting, and managing properties.
-  ●	AI Objective: To use AI to understand client requirements and recommend suitable or similar properties.
+Users can search for properties by location, price, size, and category. Brokers can manage their property listings, while administrators oversee users, properties, reviews, and platform activities.
 
-1.4 Scope
-In-Scope:
-  •	Client, Broker and Admin accounts
-  •	Property posting and management
-  •	Search and filter
-  •	Comments and messaging
-  •	Email notifications
-  •	AI property recommendation
-  •	Reviews and admin management
+## ✨ Key Features
 
-Out-of-Scope:
-  •	Legal property verification
-  •	Physical property inspection
-  •	Real-time property price prediction
+### 🏠 Property Marketplace
+- Browse available properties for sale and rent.
+- Search and filter properties by location, price, size, and type.
+- View detailed property information and images.
+- Explore featured properties and broker profiles.
+- Discover similar properties.
 
-AI Scope:
-     AI will understand user requirements and recommend properties from the available database. It will not verify legal ownership or make financial/legal decisions.
+### 🤖 AI Property Assistant
+- Understand property requirements written in natural language.
+- Convert user requests into structured search criteria.
+- Recommend matching properties from the available database.
+- Suggest similar properties based on user requirements.
 
-1.5 Stakeholders
-  •	Client: Searches properties and communicates with brokers.
-  •	Broker: Posts and manages property listings and communicates with clients.
-  •	Admin: Manages users, brokers, properties, reviews, reports and Maintains and manages the overall platform.
-  
-1.6 Proposed Solution
-EstateHub will provide a centralized platform where clients can search properties and directly communicate with brokers. Brokers can create and manage listings, while admins control the platform. The AI assistant will take natural-language requirements from clients and recommend matching properties from the database.
-Client → AI Assistant → Property Database → Matching Properties → Client
+**Example request:**
 
-1.7 AI Features
-  ●	Existing AI Features: Some modern real estate platforms use recommendation systems and AI chat assistants, but their features may be limited or not personalized to local property data.
-  ●	Proposed AI Features: An AI Property Assistant will accept requirements such as “I need a 3-bedroom flat in Uttara under 80 lakh” and return suitable properties from the database.
-  ●	AI Techniques: LLM integration + Natural Language Processing + Rule-based/semantic property recommendation.
-  ●	Why AI Is Essential: I AI is a core part of EstateHub because it converts natural-language requirements into property search criteria and provides personalized recommendations, reducing the need for manual searching.
+> I need a 3-bedroom flat in Uttara under 80 lakh.
 
-2. System Requirements
-  •	The system shall allow clients, brokers, and admins to create and manage accounts.
-  •	The system shall allow brokers to add, edit, and delete property listings.
-  •	The system shall allow clients to search and filter properties.
-  •	The system shall allow clients to comment and message brokers.
-  •	The system shall send notifications to brokers for new interactions.
-  •	The system shall allow admins to manage users and properties.
-  •	The system shall understand client requirements using AI.
-  •	The system shall recommend matching or similar properties.
+The AI assistant will interpret the requirements and help the user find matching properties from the available listings.
 
-3. Tools and Technologies
-Frontend-	React.js
-Backend-	Node.js, Express.js
-Programming Language-	JavaScript
-Database-	MySQL
-AI-	LLM API + NLP
-UI-	Tailwind CSS
-Authentication-	JWT / Secure Cookies
-Containerization-	Docker
+**AI technologies:** Large Language Model (LLM) integration, Natural Language Processing (NLP), and rule-based or semantic property matching.
 
-4. Project Timeline and Work Plan
+### 👤 User Roles
 
-  Week 1–2-	Set up the project, database schema, backend, frontend, and environment configuration.
-  Week 3–4-	Implement authentication, role permissions, property CRUD, search, filters, and property details.
-  Week 5–6-	Build the premium homepage, circular property orbit, responsive navigation, property cards, broker profiles, and animations.
-  Week 7–8-	Implement comments, private messaging, favorites, reviews, and email notifications
-  Week 9-	Implement the AI property assistant and similar-property recommendation logic.
-  Week 10–11-	Implement the admin dashboard, moderation workflows, testing, documentation, and optional Docker support.
+**Client**
+- Search and explore properties.
+- View property details.
+- Comment on property listings.
+- Message brokers.
+- Save favorite properties.
+- Submit reviews and feedback.
 
-Team Work:
-Team members will divide the work among Frontend, Backend & Database, AI, and Testing/Documentation.
+**Broker**
+- Create, edit, and delete property listings.
+- Manage property information.
+- Communicate with interested clients.
+- Receive email notifications for new interactions.
 
-5. Optional Sections
-Existing System
-Existing real estate websites mainly provide property listings, search, filters, and broker contact features. EstateHub adds an AI-based natural-language property recommendation system.
- 
-Ethical, Legal & Social Considerations
-The system will protect user information and restrict access based on user roles. AI recommendations will use available property data and will not make legal or financial decisions.
+**Admin**
+- Manage client and broker accounts.
+- Manage property listings.
+- Moderate reviews and reported content.
+- Monitor and maintain the overall platform.
 
-Future Work
-Future versions may include map-based property search, multilingual/Bangla AI support, virtual property tours, and advanced personalized recommendation models.
+### 💬 Communication and Notifications
+- Client-to-broker messaging.
+- Property comments and interactions.
+- Email notifications for relevant new activities.
+- Broker and client review functionality.
 
+### 🎨 Modern User Interface
+- Responsive design for desktop, tablet, and mobile devices.
+- Modern property cards and broker profiles.
+- Interactive animations and visual elements.
+- User-friendly navigation and search experience.
 
+## 🛠️ Technologies Used
 
+| Component | Technology |
+|---|---|
+| Frontend | React.js |
+| Backend | Node.js, Express.js |
+| Programming Language | JavaScript |
+| Database | MySQL |
+| Styling | Tailwind CSS |
+| Authentication | JWT / Secure Cookies |
+| AI Integration | LLM API + NLP |
+| Containerization | Docker |
+
+## 🏗️ System Workflow
+
+1. The client enters property requirements through the search interface or AI assistant.
+2. The AI assistant interprets the natural-language request.
+3. The system converts the request into searchable property criteria.
+4. The backend retrieves matching properties from the MySQL database.
+5. The system displays matching or similar properties to the client.
+6. The client can view property details and contact the broker.
+
+**Workflow:**
+
+`Client → AI Assistant → Backend → MySQL Database → Matching Properties → Client`
+
+## 📂 Project Modules
+
+- **Authentication Module:** Registration, login, and role-based access.
+- **Property Management Module:** Create, update, delete, and view listings.
+- **Search Module:** Property search, filters, and sorting.
+- **AI Recommendation Module:** Natural-language requirement processing and property matching.
+- **Communication Module:** Comments and private messaging.
+- **Notification Module:** Email notifications for user interactions.
+- **Review Module:** Broker and property-related feedback.
+- **Admin Module:** User management, property moderation, and platform administration.
+
+## ⚙️ Installation and Setup
+
+### Prerequisites
+
+Install the following tools before running the project:
+
+- [Node.js](https://nodejs.org/) (LTS version recommended)
+- [MySQL](https://dev.mysql.com/downloads/installer/)
+- [Git](https://git-scm.com/)
+- A code editor such as Visual Studio Code
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Mahmud394/Estatehub.git
+cd Estatehub
+```
+
+### 2. Install Dependencies
+
+Navigate to the relevant frontend and backend directories and install their dependencies.
+
+```bash
+cd client
+npm install
+```
+
+If the backend is maintained in a separate directory, open another terminal and run:
+
+```bash
+cd server
+npm install
+```
+
+*Note: Adjust the directory names and commands according to the actual project structure.*
+
+### 3. Configure Environment Variables
+
+Create the appropriate `.env` file for the backend and configure the required database and application settings.
+
+Example:
+
+```env
+PORT=5000
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=estatehub
+JWT_SECRET=your_secure_secret
+LLM_API_KEY=your_llm_api_key
+```
+
+Use the actual environment variable names expected by your application. Never commit real passwords, API keys, or secrets to GitHub.
+
+### 4. Configure the Database
+
+1. Start your MySQL server.
+2. Create the `estatehub` database.
+3. Import the project's SQL file if one is provided, or run the database setup scripts.
+4. Ensure the backend database configuration matches your MySQL settings.
+
+### 5. Run the Application
+
+Start the backend from its directory:
+
+```bash
+npm run dev
+```
+
+Start the frontend from the `client` directory in a separate terminal:
+
+```bash
+npm run dev
+```
+
+Open the local URL displayed in the frontend terminal, commonly `http://localhost:5173` for a Vite application.
+
+*The commands above assume the corresponding scripts are configured in each directory's `package.json`.*
+
+## 🗓️ Development Roadmap
+
+| Timeline | Planned Work |
+|---|---|
+| Weeks 1–2 | Project setup, database schema, frontend and backend configuration |
+| Weeks 3–4 | Authentication, role permissions, property management, search and filters |
+| Weeks 5–6 | Homepage design, property cards, broker profiles and animations |
+| Weeks 7–8 | Comments, messaging, favorites, reviews and email notifications |
+| Week 9 | AI property assistant and similar-property recommendations |
+| Weeks 10–11 | Admin dashboard, testing, documentation and Docker support |
+
+## 🔐 Security and Ethical Considerations
+
+- Protect user information and authentication credentials.
+- Enforce role-based permissions for clients, brokers, and administrators.
+- Validate user inputs and restrict unauthorized access.
+- Protect API keys and sensitive environment variables.
+- Use available property information to generate recommendations.
+- Do not treat AI recommendations as legal, financial, or property-ownership verification.
+
+## 🚀 Future Improvements
+
+- Map-based property search.
+- Bangla and multilingual AI assistance.
+- Virtual property tours.
+- More advanced personalized recommendation models.
+- Improved property comparison tools.
+- Enhanced analytics for brokers and administrators.
+
+## 🎯 Project Objectives
+
+- Develop a user-friendly real estate marketplace.
+- Simplify property discovery through search and filtering.
+- Connect clients and brokers through direct communication.
+- Integrate AI to interpret natural-language property requirements.
+- Recommend relevant properties using available listing data.
+
+## 👥 Team
+
+Developed as an academic capstone project by a team of Software Engineering students.
+
+## 📄 License
+
+This project is developed for educational and academic purposes. A formal open-source license can be added if the project is intended for public reuse.
+
+---
+
+**EstateHub — Find the Right Property, Smarter.** 🏡🤖
