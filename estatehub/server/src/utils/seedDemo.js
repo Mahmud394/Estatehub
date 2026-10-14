@@ -36,17 +36,17 @@ async function seed() {
     return r.insertId;
   };
 
-  await addUser('Demo Admin', 'admin@estatehub.demo', 'admin', null);
-  const broker1 = await addUser('Rahim Uddin (Demo)', 'broker1@estatehub.demo', 'broker', '+8801700000001');
-  const broker2 = await addUser('Nusrat Jahan (Demo)', 'broker2@estatehub.demo', 'broker', '+8801700000002');
-  const client1 = await addUser('Demo Client One', 'client1@estatehub.demo', 'client', null);
-  await addUser('Demo Client Two', 'client2@estatehub.demo', 'client', null);
+  await addUser('Admin', 'admin@gmail.com', 'admin', null);
+  const broker1 = await addUser('Mahmud Un Nabi', 'broker1@gmail.com', 'broker', '+8801701102547');
+  const broker2 = await addUser('Abu Nuhash', 'broker2@gmail.com', 'broker', '+8801819486719');
+  const client1 = await addUser('Client One', 'client1@gmail.com', 'client', null);
+  await addUser('Client Two', 'client2@gmail.com', 'client', null);
 
   await conn.execute(
     `INSERT INTO broker_profiles (user_id, company_name, bio, service_areas, verification_status, verified_at)
      VALUES (?,?,?,?, 'approved', NOW()), (?,?,?,?, 'approved', NOW())`,
-    [broker1, 'Demo Realty Ltd.', 'Demo broker profile.', 'Uttara, Bashundhara, Mirpur',
-     broker2, 'Demo Homes BD', 'Demo broker profile.', 'Chattogram, Sylhet, Dhaka']
+    [broker1, 'Realty Ltd.', 'broker profile.', 'Uttara, Bashundhara, Mirpur',
+     broker2, 'Homes BD', 'broker profile.', 'Chattogram, Sylhet, Dhaka']
   );
 
   for (let i = 0; i < properties.length; i++) {
