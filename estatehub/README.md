@@ -2,7 +2,7 @@
 
 Smart real estate marketplace (React + Express + MySQL). University Software Engineering capstone project.
 
-**Status:** Phase 1 of 6 complete (project setup, database schema, backend + frontend skeleton).
+**Status:** Phase 2 of 6 complete (authentication, roles, property CRUD, search/filters, image upload, broker dashboard).
 
 ## Folder structure
 
@@ -19,7 +19,13 @@ estatehub/
 │       ├── App.jsx
 │       ├── services/api.js
 │       ├── styles/index.css
-│       ├── components/  pages/  layouts/  hooks/  context/  utils/  assets/   (filled in later phases)
+│       ├── context/AuthContext.jsx
+│       ├── layouts/MainLayout.jsx
+│       ├── utils/format.js
+│       ├── components/     Navbar, Footer, PropertyCard, PropertyFilters, Pagination, FormField,
+│       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error)
+│       └── pages/          Home, Login, Register, Properties, PropertyDetails, NotFound,
+│                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile)
 ├── server/                 Express REST API
 │   ├── package.json
 │   ├── .env.example
@@ -28,10 +34,13 @@ estatehub/
 │       ├── server.js
 │       ├── app.js
 │       ├── config/         env.js, db.js
-│       ├── routes/         index.js, health.js
-│       ├── middleware/     errorHandler.js
-│       ├── utils/          response.js, initDb.js, seedDemo.js
-│       └── controllers/  services/  validators/   (filled in later phases)
+│       ├── routes/         index.js, health.js, auth.js, properties.js
+│       ├── controllers/    authController.js, propertyController.js
+│       ├── services/       propertyService.js (SQL + response shaping)
+│       ├── validators/     authSchemas.js, propertySchemas.js (zod)
+│       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
+│       └── utils/          response.js, initDb.js, seedDemo.js
+│   └── tests/              permissions.test.js (auth, roles, property rules)
 ├── database/schema.sql     All tables, keys, indexes
 ├── docs/                   api-documentation.md, er-diagram.md
 ├── .gitignore
@@ -111,10 +120,45 @@ Open http://localhost:5173. The page should show **API: up · Database: up**.
 | Page says "Problem: Failed to fetch" | Backend isn't running on port 5000 |
 | Port already in use | Change `PORT` in `server/.env` and the proxy target in `client/vite.config.js` |
 
+## Try Phase 2
+
+Database is unchanged since Phase 1, so you do **not** need to run `db:init` again (only if you have not run it yet).
+Restart both servers, then:
+
+1. Open http://localhost:5173/properties. You should see the 8 demo listings. Try the filters, sorting, pagination (page size 9) and **Clear**.
+2. Click a listing: gallery, details, broker card and similar properties.
+3. Log in as `broker1@estatehub.demo` / `Demo@12345`. The account menu now has **My dashboard**.
+4. **Add property**: fill the form. The listing is created as *pending* and you are taken to the edit page to upload photos. It does **not** appear on `/properties` yet (only approved ones do).
+5. Approve it manually (the admin dashboard arrives in Phase 6). In MySQL:
+   `UPDATE estatehub.properties SET approval_status='approved' WHERE title='YOUR TITLE';`
+   It now shows on `/properties`.
+6. Edit the approved listing's price: it goes back to *pending* (re-approval workflow).
+7. Log in as `broker2@estatehub.demo` and open `/broker`. You cannot see or edit broker1's listings.
+8. Register a new buyer account. Visiting `/broker` redirects away, and the API returns 403 for broker actions.
+
+### Run the automated tests
+
+With MySQL running and `db:init` done once:
+
+```bash
+cd server
+npm test
+```
+
+The tests create temporary users, check registration rules, role permissions, ownership checks, re-approval, the hidden private address and search filters, then delete their own data.
+
+## Design decisions (Phase 2)
+
+- **Auth:** JWT in an HTTP-only cookie. The user is re-loaded from MySQL on every request, so suspending a user takes effect immediately.
+- **Admins** cannot be registered through the API. Promote a user in MySQL: `UPDATE users SET role='admin' WHERE email='...';`
+- **Re-approval:** editing title, description, type, purpose, price, size, rooms, city or area of an approved listing sends it back to *pending*. Changing only availability or the private address does not.
+- **Nav links:** "Find a Broker" and "AI Assistant" are added when those pages exist (Phases 3 and 5), so there are no dead links.
+- **Keyword search** uses `LIKE` on title, description, area and city (simple and predictable for a student project).
+
 ## Phase checklist
 
 - [x] Phase 1 – Setup, schema, skeleton
-- [ ] Phase 2 – Auth, roles, property CRUD, search, details
+- [x] Phase 2 – Auth, roles, property CRUD, search, details
 - [ ] Phase 3 – Homepage + circular property orbit
 - [ ] Phase 4 – Comments, messaging, favorites, reviews, email
 - [ ] Phase 5 – EstateAI assistant
