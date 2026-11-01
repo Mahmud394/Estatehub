@@ -2,7 +2,11 @@
 
 Smart real estate marketplace (React + Express + MySQL). University Software Engineering capstone project.
 
+<<<<<<< HEAD
 **Status:** Phase 3 of 6 complete (premium homepage with the circular property orbit, broker directory and profiles, legal pages).
+=======
+**Status:** Phase 2 of 6 complete (authentication, roles, property CRUD, search/filters, image upload, broker dashboard).
+>>>>>>> origin/main
 
 ## Folder structure
 
@@ -17,17 +21,25 @@ estatehub/
 │   └── src/
 │       ├── main.jsx
 │       ├── App.jsx
+<<<<<<< HEAD
 │       ├── hooks/          useApi.js, useMediaQuery.js
+=======
+>>>>>>> origin/main
 │       ├── services/api.js
 │       ├── styles/index.css
 │       ├── context/AuthContext.jsx
 │       ├── layouts/MainLayout.jsx
 │       ├── utils/format.js
 │       ├── components/     Navbar, Footer, PropertyCard, PropertyFilters, Pagination, FormField,
+<<<<<<< HEAD
 │       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error),
 │       │                   PropertyOrbit, PropertySearchBar, BrokerCard, ReviewCard, Stars, Avatar, Reveal
 │       └── pages/          Home, Login, Register, Properties, PropertyDetails, Brokers,
 │                           BrokerPublicProfile, StaticPage (About/Terms/Privacy), NotFound,
+=======
+│       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error)
+│       └── pages/          Home, Login, Register, Properties, PropertyDetails, NotFound,
+>>>>>>> origin/main
 │                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile)
 ├── server/                 Express REST API
 │   ├── package.json
@@ -37,13 +49,22 @@ estatehub/
 │       ├── server.js
 │       ├── app.js
 │       ├── config/         env.js, db.js
+<<<<<<< HEAD
 │       ├── routes/         index.js, health.js, auth.js, properties.js, brokers.js, public.js
 │       ├── controllers/    authController, propertyController, brokerController, publicController
+=======
+│       ├── routes/         index.js, health.js, auth.js, properties.js
+│       ├── controllers/    authController.js, propertyController.js
+>>>>>>> origin/main
 │       ├── services/       propertyService.js (SQL + response shaping)
 │       ├── validators/     authSchemas.js, propertySchemas.js (zod)
 │       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
 │       └── utils/          response.js, initDb.js, seedDemo.js
+<<<<<<< HEAD
 │   └── tests/              permissions.test.js (auth, roles, property rules), public.test.js
+=======
+│   └── tests/              permissions.test.js (auth, roles, property rules)
+>>>>>>> origin/main
 ├── database/schema.sql     All tables, keys, indexes
 ├── docs/                   api-documentation.md, er-diagram.md
 ├── .gitignore
@@ -150,6 +171,7 @@ npm test
 
 The tests create temporary users, check registration rules, role permissions, ownership checks, re-approval, the hidden private address and search filters, then delete their own data.
 
+<<<<<<< HEAD
 ## Try Phase 3
 
 Restart both servers (no database changes, no new packages). Then:
@@ -175,6 +197,8 @@ Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 - **Footer:** contact email and social links are placeholders. Edit the `CONTACT` and `SOCIAL_LINKS` constants at the top of `client/src/components/Footer.jsx`.
 - **Navbar:** "AI Assistant" is added in Phase 5. Review submission and the favorite button arrive in Phase 4.
 
+=======
+>>>>>>> origin/main
 ## Design decisions (Phase 2)
 
 - **Auth:** JWT in an HTTP-only cookie. The user is re-loaded from MySQL on every request, so suspending a user takes effect immediately.
@@ -187,7 +211,11 @@ Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 
 - [x] Phase 1 – Setup, schema, skeleton
 - [x] Phase 2 – Auth, roles, property CRUD, search, details
+<<<<<<< HEAD
 - [x] Phase 3 – Homepage + circular property orbit
+=======
+- [ ] Phase 3 – Homepage + circular property orbit
+>>>>>>> origin/main
 - [ ] Phase 4 – Comments, messaging, favorites, reviews, email
 - [ ] Phase 5 – EstateAI assistant
 - [ ] Phase 6 – Admin dashboard, tests, docs, Docker

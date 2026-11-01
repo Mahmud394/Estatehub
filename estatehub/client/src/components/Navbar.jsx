@@ -1,15 +1,27 @@
 import { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Building2, Menu, X, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 // "AI Assistant" is added in Phase 5 when that page exists, so there are no dead links in this build.
+=======
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Building2, Menu, X, ChevronDown } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.jsx';
+
+// Links to pages that do not exist yet (Find a Broker, AI Assistant) are added in later phases,
+// so there are no dead links in this build.
+>>>>>>> origin/main
 const LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/properties?purpose=sale', label: 'Buy' },
   { to: '/properties?purpose=rent', label: 'Rent' },
   { to: '/properties?category=commercial', label: 'Commercial' },
+<<<<<<< HEAD
   { to: '/brokers', label: 'Find a Broker' },
+=======
+>>>>>>> origin/main
 ];
 
 const DASHBOARD = { broker: '/broker', client: null, admin: null };
@@ -17,7 +29,10 @@ const DASHBOARD = { broker: '/broker', client: null, admin: null };
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+<<<<<<< HEAD
   const onHome = useLocation().pathname === '/'; // transparent over the hero until you scroll
+=======
+>>>>>>> origin/main
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState(false);
   const [solid, setSolid] = useState(false);
@@ -41,12 +56,17 @@ export default function Navbar() {
 
   return (
     <header
+<<<<<<< HEAD
       className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
         solid || open
           ? 'bg-midnight/95 shadow-lg backdrop-blur'
           : onHome
             ? 'bg-transparent'
             : 'bg-midnight/90 backdrop-blur-sm'
+=======
+      className={`fixed inset-x-0 top-0 z-40 transition-all ${
+        solid || open ? 'bg-midnight/95 shadow-lg backdrop-blur' : 'bg-midnight/80 backdrop-blur-sm'
+>>>>>>> origin/main
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6" aria-label="Main">

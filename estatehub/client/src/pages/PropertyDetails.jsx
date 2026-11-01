@@ -3,11 +3,17 @@ import { Link, useParams } from 'react-router-dom';
 import { BedDouble, Bath, Ruler, MapPin, Building } from 'lucide-react';
 import { api } from '../services/api.js';
 import PropertyCard from '../components/PropertyCard.jsx';
+<<<<<<< HEAD
 import Avatar from '../components/Avatar.jsx';
 import { LoadingSpinner, ErrorMessage } from '../components/StateViews.jsx';
 import { formatPrice, formatSize, formatDate, CATEGORY_LABELS } from '../utils/format.js';
 import { getPropertyGallery } from '../utils/propertyImages.js';
 
+=======
+import { LoadingSpinner, ErrorMessage } from '../components/StateViews.jsx';
+import { formatPrice, formatSize, formatDate, CATEGORY_LABELS } from '../utils/format.js';
+import { getPropertyGallery } from '../utils/propertyImages.js';
+>>>>>>> origin/main
 export default function PropertyDetails() {
   const { id } = useParams();
   const [state, setState] = useState({ loading: true });
@@ -66,7 +72,11 @@ export default function PropertyDetails() {
           <div className="mt-6 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
             <span className="rounded bg-midnight px-2.5 py-1 text-gold">{p.purpose === 'sale' ? 'For Sale' : 'For Rent'}</span>
             <span className="rounded bg-forest/10 px-2.5 py-1 text-forest">{CATEGORY_LABELS[p.category]}</span>
+<<<<<<< HEAD
             
+=======
+            {p.isDemo && <span className="rounded bg-gray-100 px-2.5 py-1 text-gray-600">Demo listing</span>}
+>>>>>>> origin/main
           </div>
           <h1 className="mt-3 text-4xl">{p.title}</h1>
           <p className="mt-2 flex items-center gap-1 text-gray-600"><MapPin className="h-4 w-4" aria-hidden="true" />{p.area}, {p.city}</p>
@@ -91,14 +101,23 @@ export default function PropertyDetails() {
           <div className="rounded border border-gray-200 bg-white p-5">
             <p className="text-xs uppercase tracking-wider text-gray-500">Listed by</p>
             <div className="mt-3 flex items-center gap-3">
+<<<<<<< HEAD
               <Avatar name={p.broker.name} url={p.broker.avatarUrl} className="h-12 w-12 text-base" />
+=======
+              <img src={p.broker.avatarUrl || `https://ui-avatars.com/api/?background=174C3C&color=F7F5F0&name=${encodeURIComponent(p.broker.name)}`}
+                alt="" className="h-12 w-12 rounded-full object-cover" />
+>>>>>>> origin/main
               <div>
                 <p className="font-semibold">{p.broker.name}</p>
                 {p.broker.companyName && <p className="text-sm text-gray-600">{p.broker.companyName}</p>}
                 {p.broker.verified && <p className="text-xs font-medium text-forest">Verified broker</p>}
               </div>
             </div>
+<<<<<<< HEAD
             
+=======
+            <p className="mt-4 text-xs text-gray-500">Comments and messaging with the broker arrive in Phase 4.</p>
+>>>>>>> origin/main
           </div>
         </aside>
       </div>
