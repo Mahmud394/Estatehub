@@ -88,4 +88,25 @@ Notes:
 - Land cannot have bedrooms/bathrooms.
 - `similar` (in `GET /properties/:id`) uses a transparent rule: same category and purpose, price within ±40%, same area first, then same city, then closest price.
 
+<<<<<<< HEAD
+## Brokers (public)
+
+Only brokers whose verification status is `approved` and whose account is active are returned. Email, phone and password data are never included.
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/brokers` | none | Verified brokers. Query: `q` (name/company), `area` (service area), `page`, `limit` (max 50) |
+| GET | `/brokers/:id` | none | One broker with `listings` (approved + available) and `reviews` (visible) |
+
+Each broker has `averageRating` (null when there are no reviews), `reviewCount` and `activeListings`, all computed from the database.
+
+## Public homepage data
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/public/stats` | none | Real counts: `activeListings`, `verifiedBrokers`, `byCategory`, and `topAreas` (areas ordered by active listing count, with a photo from a listing) |
+| GET | `/public/reviews/recent?limit=3` | none | Latest visible reviews. Demo reviews have `"isDemo": true` so the UI labels them as sample content |
+
+=======
+>>>>>>> origin/main
 More endpoints (comments, messages, favorites, reviews, notifications, admin, AI) are added in later phases.

@@ -19,6 +19,22 @@ const propertyLinks = [
   { label: 'Commercial', path: '/properties?category=commercial' },
 ];
 
+<<<<<<< HEAD
+const brokerLinks = [
+  { label: 'Find a Broker', path: '/brokers' },
+  { label: 'Join as a Broker', path: '/register?role=broker' },
+  { label: 'Broker Login', path: '/login' },
+  { label: 'Create an Account', path: '/register' },
+];
+
+const socialLinks = [
+  { icon: Instagram, label: 'Instagram', href: null },
+  { icon: Facebook, label: 'Facebook', href: null },
+  { icon: Linkedin, label: 'LinkedIn', href: null },
+];
+
+=======
+>>>>>>> origin/main
 export default function Footer() {
   const scrollToTop = () => {
     window.scrollTo({
@@ -87,6 +103,31 @@ export default function Footer() {
             </Link>
 
             <p className="mt-6 max-w-sm text-sm leading-7 text-ivory/55">
+<<<<<<< HEAD
+              A smarter real estate marketplace connecting buyers,
+              renters, property owners, and brokers. Discover spaces
+              that fit your lifestyle with EstateHub.
+            </p>
+
+            <Link
+              to="/about"
+              className="mt-4 inline-flex items-center gap-2 text-sm text-gold transition-colors hover:text-ivory"
+            >
+              About EstateHub
+              <ArrowUpRight size={15} />
+            </Link>
+
+            <div className="mt-6 flex gap-3">
+              {socialLinks.map(({ icon: Icon, label, href }) => (
+                <a
+                  key={label}
+                  href={href || undefined}
+                  aria-label={label}
+                  aria-disabled={!href}
+                  onClick={(event) => {
+                    if (!href) event.preventDefault();
+                  }}
+=======
               A smarter way to discover properties, connect with brokers,
               and find spaces that fit your lifestyle. Your property
               journey starts with EstateHub.
@@ -102,6 +143,7 @@ export default function Footer() {
                   key={label}
                   href="#"
                   aria-label={label}
+>>>>>>> origin/main
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ivory/60 transition-all duration-300 hover:border-gold hover:bg-gold hover:text-midnight"
                 >
                   <Icon size={17} />
@@ -141,6 +183,18 @@ export default function Footer() {
             </h3>
 
             <ul className="mt-6 space-y-4 text-sm">
+<<<<<<< HEAD
+              {brokerLinks.map(({ label, path }) => (
+                <li key={label}>
+                  <Link
+                    to={path}
+                    className="transition-colors hover:text-gold"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+=======
               <li>
                 <Link
                   to="/register?role=broker"
@@ -165,17 +219,29 @@ export default function Footer() {
                   Create an Account
                 </Link>
               </li>
+>>>>>>> origin/main
             </ul>
 
             <div className="mt-7 rounded-xl border border-white/10 bg-white/[0.03] p-4">
               <p className="text-sm font-medium text-ivory">
                 Own a property?
               </p>
+<<<<<<< HEAD
+              <p className="mt-1 text-xs leading-5 text-ivory/50">
+                Join EstateHub and showcase your listings.
+              </p>
+              <Link
+                to="/register?role=broker"
+                className="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-gold hover:text-ivory"
+              >
+                Start Listing
+=======
               <Link
                 to="/register?role=broker"
                 className="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-gold hover:text-ivory"
               >
                 Start listing
+>>>>>>> origin/main
                 <ArrowUpRight size={14} />
               </Link>
             </div>
@@ -201,6 +267,19 @@ export default function Footer() {
               <li className="flex items-center gap-3">
                 <Mail size={17} className="shrink-0 text-gold" />
                 <a
+<<<<<<< HEAD
+                  href="mailto:contact@estatehub.example"
+                  className="break-all transition-colors hover:text-gold"
+                >
+                  contact@estatehub.example
+                </a>
+              </li>
+
+              <li className="flex items-start gap-3">
+                <Phone size={17} className="mt-0.5 shrink-0 text-gold" />
+                <span className="text-ivory/60">
+                  Contact your broker for property inquiries.
+=======
                   href="mailto:info@estatehub.com"
                   className="break-all transition-colors hover:text-gold"
                 >
@@ -212,6 +291,7 @@ export default function Footer() {
                 <Phone size={17} className="shrink-0 text-gold" />
                 <span className="text-ivory/60">
                   Contact your broker
+>>>>>>> origin/main
                 </span>
               </li>
             </ul>
@@ -224,11 +304,44 @@ export default function Footer() {
             © {new Date().getFullYear()} EstateHub. All rights reserved.
           </p>
 
+<<<<<<< HEAD
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <Link
+              to="/terms"
+              className="text-ivory/50 transition-colors hover:text-gold"
+            >
+              Terms & Conditions
+            </Link>
+            <Link
+              to="/privacy"
+              className="text-ivory/50 transition-colors hover:text-gold"
+            >
+              Privacy Policy
+            </Link>
+          </div>
+
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="inline-flex w-fit items-center gap-2 text-ivory/60 transition-colors hover:text-gold"
+          >
+            Back to top
+            <ArrowUpRight size={14} />
+          </button>
+        </div>
+
+        {/* Demo Disclaimer */}
+        <div className="border-t border-white/5 py-4 text-center">
+          <p className="text-[11px] leading-5 text-ivory/35">
+=======
           <p className="text-ivory/40">
+>>>>>>> origin/main
             A university capstone project
             <span className="mx-2 text-gold">•</span>
             Built for better property discovery
           </p>
+<<<<<<< HEAD
+=======
 
           <button
             type="button"
@@ -238,6 +351,7 @@ export default function Footer() {
             Back to top
             <ArrowUpRight size={14} />
           </button>
+>>>>>>> origin/main
         </div>
       </div>
 

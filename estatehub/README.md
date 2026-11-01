@@ -2,7 +2,11 @@
 
 Smart real estate marketplace (React + Express + MySQL). University Software Engineering capstone project.
 
+<<<<<<< HEAD
+**Status:** Phase 3 of 6 complete (premium homepage with the circular property orbit, broker directory and profiles, legal pages).
+=======
 **Status:** Phase 2 of 6 complete (authentication, roles, property CRUD, search/filters, image upload, broker dashboard).
+>>>>>>> origin/main
 
 ## Folder structure
 
@@ -17,14 +21,25 @@ estatehub/
 │   └── src/
 │       ├── main.jsx
 │       ├── App.jsx
+<<<<<<< HEAD
+│       ├── hooks/          useApi.js, useMediaQuery.js
+=======
+>>>>>>> origin/main
 │       ├── services/api.js
 │       ├── styles/index.css
 │       ├── context/AuthContext.jsx
 │       ├── layouts/MainLayout.jsx
 │       ├── utils/format.js
 │       ├── components/     Navbar, Footer, PropertyCard, PropertyFilters, Pagination, FormField,
+<<<<<<< HEAD
+│       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error),
+│       │                   PropertyOrbit, PropertySearchBar, BrokerCard, ReviewCard, Stars, Avatar, Reveal
+│       └── pages/          Home, Login, Register, Properties, PropertyDetails, Brokers,
+│                           BrokerPublicProfile, StaticPage (About/Terms/Privacy), NotFound,
+=======
 │       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error)
 │       └── pages/          Home, Login, Register, Properties, PropertyDetails, NotFound,
+>>>>>>> origin/main
 │                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile)
 ├── server/                 Express REST API
 │   ├── package.json
@@ -34,13 +49,22 @@ estatehub/
 │       ├── server.js
 │       ├── app.js
 │       ├── config/         env.js, db.js
+<<<<<<< HEAD
+│       ├── routes/         index.js, health.js, auth.js, properties.js, brokers.js, public.js
+│       ├── controllers/    authController, propertyController, brokerController, publicController
+=======
 │       ├── routes/         index.js, health.js, auth.js, properties.js
 │       ├── controllers/    authController.js, propertyController.js
+>>>>>>> origin/main
 │       ├── services/       propertyService.js (SQL + response shaping)
 │       ├── validators/     authSchemas.js, propertySchemas.js (zod)
 │       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
 │       └── utils/          response.js, initDb.js, seedDemo.js
+<<<<<<< HEAD
+│   └── tests/              permissions.test.js (auth, roles, property rules), public.test.js
+=======
 │   └── tests/              permissions.test.js (auth, roles, property rules)
+>>>>>>> origin/main
 ├── database/schema.sql     All tables, keys, indexes
 ├── docs/                   api-documentation.md, er-diagram.md
 ├── .gitignore
@@ -147,6 +171,34 @@ npm test
 
 The tests create temporary users, check registration rules, role permissions, ownership checks, re-approval, the hidden private address and search filters, then delete their own data.
 
+<<<<<<< HEAD
+## Try Phase 3
+
+Restart both servers (no database changes, no new packages). Then:
+
+1. Open http://localhost:5173. On a desktop-width window (1200px or wider) you should see the **circular orbit**: property cards travel around the headline and search form.
+2. **Hover** a card: it grows, comes to the front, the orbit pauses and extra details (beds, baths, broker) appear. Move the mouse away and the orbit eases back up. Click the card to open its page.
+3. **Keyboard:** press Tab. Focusing a card pauses the orbit too. Use the **Pause orbit** button (bottom right of the hero) to stop it completely.
+4. Make the window narrower than 1200px, or open it on a phone: the orbit becomes a horizontally scrollable carousel.
+5. Turn on *Reduce motion* in your operating system settings and reload: the carousel is shown and nothing moves.
+6. Use the hero search (Buy/Rent, location, type, budget). It opens `/properties` with the matching filters.
+7. Scroll the homepage: highlights (real counts), featured listings, property types, locations, brokers, EstateAI preview, reviews, how it works, call to action.
+8. Open **Find a Broker** (`/brokers`), then **View Profile** on a broker. Footer links to About, Terms and Privacy work.
+
+Run the tests again with `npm test` in `server` (new file: `public.test.js`).
+
+## Design decisions (Phase 3)
+
+- **Orbit math:** each card sits on an ellipse (`x = cos(a)·rx`, `y = sin(a)·ry`). One animation loop updates only `transform` and `opacity`, so the page never reflows. See the comment at the top of `PropertyOrbit.jsx`: it is written to be explained in a defense.
+- **Readable text:** a circle around a block of text always crosses its corners, so cards pass *behind* the headline and search form and fade in proportion to how much of the card is covered.
+- **Accessibility:** orbit cards are real links in a list, hover and focus behave the same, there is a visible pause button, and reduced-motion users get a static carousel.
+- **Honest content:** counts, ratings and "popular locations" come from the database. Demo listings and sample reviews are labelled. The EstateAI section is a clearly labelled illustration, not a working feature, and has no link until Phase 5.
+- **Initials avatars:** brokers without a photo show their initials, drawn locally (no third-party image service).
+- **Footer:** contact email and social links are placeholders. Edit the `CONTACT` and `SOCIAL_LINKS` constants at the top of `client/src/components/Footer.jsx`.
+- **Navbar:** "AI Assistant" is added in Phase 5. Review submission and the favorite button arrive in Phase 4.
+
+=======
+>>>>>>> origin/main
 ## Design decisions (Phase 2)
 
 - **Auth:** JWT in an HTTP-only cookie. The user is re-loaded from MySQL on every request, so suspending a user takes effect immediately.
@@ -159,7 +211,11 @@ The tests create temporary users, check registration rules, role permissions, ow
 
 - [x] Phase 1 – Setup, schema, skeleton
 - [x] Phase 2 – Auth, roles, property CRUD, search, details
+<<<<<<< HEAD
+- [x] Phase 3 – Homepage + circular property orbit
+=======
 - [ ] Phase 3 – Homepage + circular property orbit
+>>>>>>> origin/main
 - [ ] Phase 4 – Comments, messaging, favorites, reviews, email
 - [ ] Phase 5 – EstateAI assistant
 - [ ] Phase 6 – Admin dashboard, tests, docs, Docker

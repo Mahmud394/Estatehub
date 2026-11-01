@@ -87,4 +87,8 @@ export function getPropertyGallery(property) {
   }
 
   return images;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/main

@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
 import { BedDouble, Bath, Ruler, MapPin } from 'lucide-react';
 import { formatPrice, formatSize, CATEGORY_LABELS } from '../utils/format.js';
+<<<<<<< HEAD
+import Avatar from './Avatar.jsx';
 import { getPropertyCardImage } from '../utils/propertyImages.js';
 
 
+
+=======
+import { getPropertyCardImage } from '../utils/propertyImages.js';
+
+
+>>>>>>> origin/main
 export default function PropertyCard({ property: p }) {
   return (
     <article className="group overflow-hidden rounded border border-gray-200 bg-white transition-shadow hover:shadow-xl">
@@ -36,11 +44,15 @@ export default function PropertyCard({ property: p }) {
       </Link>
       <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2">
+<<<<<<< HEAD
+          <Avatar name={p.broker.name} url={p.broker.avatarUrl} className="h-8 w-8 text-xs" />
+=======
           <img
             src={p.broker.avatarUrl || `https://ui-avatars.com/api/?background=174C3C&color=F7F5F0&name=${encodeURIComponent(p.broker.name)}`}
             alt=""
             className="h-8 w-8 rounded-full object-cover"
           />
+>>>>>>> origin/main
           <span className="text-sm text-gray-700">{p.broker.name}</span>
         </div>
         <Link to={`/properties/${p.id}`} className="text-sm font-semibold text-forest hover:text-gold">
