@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
 import { api } from '../../services/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import Stars from '../../components/Stars.jsx';
 import ConfirmationDialog from '../../components/ConfirmationDialog.jsx';
 import { LoadingSpinner, EmptyState, ErrorMessage } from '../../components/StateViews.jsx';
 import { formatPrice, CATEGORY_LABELS } from '../../utils/format.js';
@@ -18,6 +19,14 @@ export default function BrokerDashboard() {
   const [state, setState] = useState({ loading: true });
   const [toDelete, setToDelete] = useState(null);
   const [notice, setNotice] = useState('');
+  const [unread, setUnread] = useState(null);
+  const [rating, setRating] = useState(null);
+
+  // Unread messages + public rating. (Comments are not counted here: opening that page clears bell entries.)
+  useEffect(() => {
+    api('/conversations').then((d) => setUnread(d.unreadTotal)).catch(() => {});
+    api(`/brokers/${user.id}`).then(setRating).catch(() => {}); // only exists once the broker is verified
+  }, [user.id]);
 
   const load = useCallback(() => {
     api('/properties/mine')
@@ -71,6 +80,23 @@ export default function BrokerDashboard() {
           </div>
         ))}
       </dl>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <Link to="/broker/messages" className="rounded border border-gray-200 bg-white p-4 hover:border-forest">
+          <p className="text-xs uppercase tracking-wider text-gray-500">Unread messages</p>
+          <p className="mt-1 font-serif text-3xl">{unread ?? '–'}</p>
+        </Link>
+        <Link to="/broker/comments" className="rounded border border-gray-200 bg-white p-4 hover:border-forest">
+          <p className="text-xs uppercase tracking-wider text-gray-500">Comments</p>
+          <p className="mt-2 text-sm text-forest underline">See comments on my listings</p>
+        </Link>
+        <Link to={`/brokers/${user.id}#reviews`} className="rounded border border-gray-200 bg-white p-4 hover:border-forest">
+          <p className="text-xs uppercase tracking-wider text-gray-500">My rating</p>
+          {rating && rating.averageRating !== null
+            ? <p className="mt-2 flex items-center gap-2"><Stars value={rating.averageRating} /><span className="text-sm">{rating.averageRating} ({rating.reviewCount})</span></p>
+            : <p className="mt-2 text-sm text-gray-500">{rating ? 'No reviews yet' : 'Shown after verification'}</p>}
+        </Link>
+      </div>
 
       <h2 className="mt-10 text-2xl">My listings</h2>
       {state.loading && <LoadingSpinner />}

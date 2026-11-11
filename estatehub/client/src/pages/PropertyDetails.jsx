@@ -2,18 +2,33 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { BedDouble, Bath, Ruler, MapPin, Building } from 'lucide-react';
 import { api } from '../services/api.js';
+import FavoriteButton from '../components/FavoriteButton.jsx';
+import ContactBrokerForm from '../components/ContactBrokerForm.jsx';
+import CommentsSection from '../components/CommentsSection.jsx';
+import Stars from '../components/Stars.jsx';
 import PropertyCard from '../components/PropertyCard.jsx';
-<<<<<<< HEAD
 import Avatar from '../components/Avatar.jsx';
 import { LoadingSpinner, ErrorMessage } from '../components/StateViews.jsx';
 import { formatPrice, formatSize, formatDate, CATEGORY_LABELS } from '../utils/format.js';
-import { getPropertyGallery } from '../utils/propertyImages.js';
 
-=======
-import { LoadingSpinner, ErrorMessage } from '../components/StateViews.jsx';
-import { formatPrice, formatSize, formatDate, CATEGORY_LABELS } from '../utils/format.js';
-import { getPropertyGallery } from '../utils/propertyImages.js';
->>>>>>> origin/main
+// Small rating line for the broker card. Quietly shows nothing if the broker has no public page.
+function BrokerRating({ brokerId }) {
+  const [r, setR] = useState(null);
+  useEffect(() => {
+    let off = false;
+    api(`/brokers/${brokerId}`).then((b) => !off && setR(b)).catch(() => {});
+    return () => { off = true; };
+  }, [brokerId]);
+  if (!r) return null;
+  return (
+    <Link to={`/brokers/${brokerId}#reviews`} className="mt-3 flex items-center gap-2 text-sm hover:underline">
+      {r.averageRating !== null
+        ? (<><Stars value={r.averageRating} /><span className="text-gray-600">{r.averageRating} ({r.reviewCount})</span></>)
+        : <span className="text-gray-500">No reviews yet</span>}
+    </Link>
+  );
+}
+
 export default function PropertyDetails() {
   const { id } = useParams();
   const [state, setState] = useState({ loading: true });
@@ -38,7 +53,7 @@ export default function PropertyDetails() {
   }
 
   const p = state.data;
-  const images = getPropertyGallery(p);
+  const images = p.images.length ? p.images : [{ id: 0, url: 'https://picsum.photos/seed/estatehub-placeholder/900/600' }];
   const notPublic = p.approvalStatus !== 'approved';
 
   return (
@@ -72,13 +87,12 @@ export default function PropertyDetails() {
           <div className="mt-6 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
             <span className="rounded bg-midnight px-2.5 py-1 text-gold">{p.purpose === 'sale' ? 'For Sale' : 'For Rent'}</span>
             <span className="rounded bg-forest/10 px-2.5 py-1 text-forest">{CATEGORY_LABELS[p.category]}</span>
-<<<<<<< HEAD
-            
-=======
             {p.isDemo && <span className="rounded bg-gray-100 px-2.5 py-1 text-gray-600">Demo listing</span>}
->>>>>>> origin/main
           </div>
-          <h1 className="mt-3 text-4xl">{p.title}</h1>
+          <div className="mt-3 flex items-start justify-between gap-3">
+            <h1 className="text-4xl">{p.title}</h1>
+            {!notPublic && <FavoriteButton propertyId={p.id} label />}
+          </div>
           <p className="mt-2 flex items-center gap-1 text-gray-600"><MapPin className="h-4 w-4" aria-hidden="true" />{p.area}, {p.city}</p>
 
           <dl className="mt-6 grid grid-cols-2 gap-4 rounded border border-gray-200 bg-white p-4 sm:grid-cols-4">
@@ -91,6 +105,8 @@ export default function PropertyDetails() {
           <h2 className="mt-8 text-2xl">About this property</h2>
           <p className="mt-2 whitespace-pre-line text-gray-700">{p.description}</p>
           {p.addressLine && <p className="mt-4 text-sm text-gray-600"><strong>Exact address (visible to you only):</strong> {p.addressLine}</p>}
+
+          {!notPublic && <CommentsSection propertyId={p.id} brokerId={p.broker.id} />}
         </div>
 
         <aside className="h-fit space-y-4 lg:sticky lg:top-24">
@@ -101,24 +117,19 @@ export default function PropertyDetails() {
           <div className="rounded border border-gray-200 bg-white p-5">
             <p className="text-xs uppercase tracking-wider text-gray-500">Listed by</p>
             <div className="mt-3 flex items-center gap-3">
-<<<<<<< HEAD
               <Avatar name={p.broker.name} url={p.broker.avatarUrl} className="h-12 w-12 text-base" />
-=======
-              <img src={p.broker.avatarUrl || `https://ui-avatars.com/api/?background=174C3C&color=F7F5F0&name=${encodeURIComponent(p.broker.name)}`}
-                alt="" className="h-12 w-12 rounded-full object-cover" />
->>>>>>> origin/main
               <div>
                 <p className="font-semibold">{p.broker.name}</p>
                 {p.broker.companyName && <p className="text-sm text-gray-600">{p.broker.companyName}</p>}
                 {p.broker.verified && <p className="text-xs font-medium text-forest">Verified broker</p>}
               </div>
             </div>
-<<<<<<< HEAD
-            
-=======
-            <p className="mt-4 text-xs text-gray-500">Comments and messaging with the broker arrive in Phase 4.</p>
->>>>>>> origin/main
+            {p.broker.verified && <BrokerRating brokerId={p.broker.id} />}
+            {p.broker.verified && <Link to={`/brokers/${p.broker.id}`} className="mt-3 inline-block text-sm text-forest underline">View broker profile</Link>}
           </div>
+          {!notPublic && p.broker.verified && (
+            <ContactBrokerForm propertyId={p.id} brokerId={p.broker.id} brokerName={p.broker.name} propertyTitle={p.title} />
+          )}
         </aside>
       </div>
 

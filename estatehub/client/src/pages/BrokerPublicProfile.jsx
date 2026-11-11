@@ -3,7 +3,8 @@ import { BadgeCheck, MapPin } from 'lucide-react';
 import { useApi } from '../hooks/useApi.js';
 import Avatar from '../components/Avatar.jsx';
 import PropertyCard from '../components/PropertyCard.jsx';
-import ReviewCard from '../components/ReviewCard.jsx';
+import ReviewsSection from '../components/ReviewsSection.jsx';
+import ContactBrokerForm from '../components/ContactBrokerForm.jsx';
 import Stars from '../components/Stars.jsx';
 import { LoadingSpinner, EmptyState, ErrorMessage } from '../components/StateViews.jsx';
 
@@ -55,12 +56,12 @@ export default function BrokerPublicProfile() {
           : <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{b.listings.map((p) => <PropertyCard key={p.id} property={p} />)}</div>}
       </section>
 
-      <section className="mt-14" aria-labelledby="broker-reviews">
-        <h2 id="broker-reviews" className="text-3xl">Reviews</h2>
-        {b.reviews.length === 0
-          ? <p className="mt-3 text-gray-500">No reviews yet.</p>
-          : <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">{b.reviews.map((r) => <ReviewCard key={r.id} review={r} />)}</div>}
-      </section>
+      <div className="mt-14 grid gap-10 lg:grid-cols-[1fr_340px]">
+        <ReviewsSection brokerId={b.id} brokerName={b.name} />
+        <aside className="h-fit lg:sticky lg:top-24">
+          <ContactBrokerForm brokerId={b.id} brokerName={b.name} />
+        </aside>
+      </div>
     </div>
   );
 }
