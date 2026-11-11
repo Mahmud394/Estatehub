@@ -14,6 +14,14 @@ const env = {
   },
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  // Email notifications. If SMTP_HOST is empty, emails are skipped (in-app notifications still work).
+  smtp: {
+    host: process.env.SMTP_HOST || '',
+    port: Number(process.env.SMTP_PORT) || 587,
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.MAIL_FROM || 'EstateHub <no-reply@estatehub.local>',
+  },
 };
 
 if (!env.jwtSecret || env.jwtSecret.startsWith('change_me')) {

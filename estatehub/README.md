@@ -2,11 +2,7 @@
 
 Smart real estate marketplace (React + Express + MySQL). University Software Engineering capstone project.
 
-<<<<<<< HEAD
 **Status:** Phase 3 of 6 complete (premium homepage with the circular property orbit, broker directory and profiles, legal pages).
-=======
-**Status:** Phase 2 of 6 complete (authentication, roles, property CRUD, search/filters, image upload, broker dashboard).
->>>>>>> origin/main
 
 ## Folder structure
 
@@ -21,25 +17,17 @@ estatehub/
 │   └── src/
 │       ├── main.jsx
 │       ├── App.jsx
-<<<<<<< HEAD
 │       ├── hooks/          useApi.js, useMediaQuery.js
-=======
->>>>>>> origin/main
 │       ├── services/api.js
 │       ├── styles/index.css
 │       ├── context/AuthContext.jsx
 │       ├── layouts/MainLayout.jsx
 │       ├── utils/format.js
 │       ├── components/     Navbar, Footer, PropertyCard, PropertyFilters, Pagination, FormField,
-<<<<<<< HEAD
 │       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error),
 │       │                   PropertyOrbit, PropertySearchBar, BrokerCard, ReviewCard, Stars, Avatar, Reveal
 │       └── pages/          Home, Login, Register, Properties, PropertyDetails, Brokers,
 │                           BrokerPublicProfile, StaticPage (About/Terms/Privacy), NotFound,
-=======
-│       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error)
-│       └── pages/          Home, Login, Register, Properties, PropertyDetails, NotFound,
->>>>>>> origin/main
 │                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile)
 ├── server/                 Express REST API
 │   ├── package.json
@@ -49,22 +37,13 @@ estatehub/
 │       ├── server.js
 │       ├── app.js
 │       ├── config/         env.js, db.js
-<<<<<<< HEAD
 │       ├── routes/         index.js, health.js, auth.js, properties.js, brokers.js, public.js
 │       ├── controllers/    authController, propertyController, brokerController, publicController
-=======
-│       ├── routes/         index.js, health.js, auth.js, properties.js
-│       ├── controllers/    authController.js, propertyController.js
->>>>>>> origin/main
 │       ├── services/       propertyService.js (SQL + response shaping)
 │       ├── validators/     authSchemas.js, propertySchemas.js (zod)
 │       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
 │       └── utils/          response.js, initDb.js, seedDemo.js
-<<<<<<< HEAD
 │   └── tests/              permissions.test.js (auth, roles, property rules), public.test.js
-=======
-│   └── tests/              permissions.test.js (auth, roles, property rules)
->>>>>>> origin/main
 ├── database/schema.sql     All tables, keys, indexes
 ├── docs/                   api-documentation.md, er-diagram.md
 ├── .gitignore
@@ -171,7 +150,6 @@ npm test
 
 The tests create temporary users, check registration rules, role permissions, ownership checks, re-approval, the hidden private address and search filters, then delete their own data.
 
-<<<<<<< HEAD
 ## Try Phase 3
 
 Restart both servers (no database changes, no new packages). Then:
@@ -187,6 +165,34 @@ Restart both servers (no database changes, no new packages). Then:
 
 Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 
+## Try Phase 4
+
+**No database changes.** You do not need to run `db:init` again. Restart both servers, then:
+
+1. Log in as `client1@estatehub.demo` / `Demo@12345` (or register a client). The navbar now has the bell and the menu has **Messages**, **Saved properties**, **My account**.
+2. Open a property: tap the heart, write a **comment**, and send a **private message** to the broker.
+3. Open the broker's profile (`/brokers/<id>`). After you have messaged them you can give a **1-5 star rating and review**; edit or delete it later. The average and the 5-to-1 breakdown update at once.
+4. Log in as the broker in another browser window: the bell shows the new comment/message, **Messages** shows the thread (updates every few seconds), and **Comments** lists comments on your listings.
+5. Admin-hidden comments/reviews (Phase 6 moderation) cannot be edited by their authors.
+
+Brokers must be **verified** before clients can message or review them. For a new broker:
+`UPDATE estatehub.broker_profiles SET verification_status='approved' WHERE user_id=<ID>;`
+
+### Email notifications (optional)
+
+Leave `SMTP_HOST` empty in `server/.env` and emails are simply skipped (in-app notifications still work). To test emails use a free inbox such as Ethereal or Mailtrap, or Gmail with an *app password*, then fill `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` and run:
+
+```bash
+cd server
+npm run mail:test
+```
+
+Emails only contain the property title and a link to your dashboard, never message or comment text.
+
+### Tests
+
+`npm test` (needs MySQL) now also covers comments, messaging privacy, favorites and reviews. `node --test tests/unit.test.js` runs the database-free checks.
+
 ## Design decisions (Phase 3)
 
 - **Orbit math:** each card sits on an ellipse (`x = cos(a)·rx`, `y = sin(a)·ry`). One animation loop updates only `transform` and `opacity`, so the page never reflows. See the comment at the top of `PropertyOrbit.jsx`: it is written to be explained in a defense.
@@ -195,10 +201,8 @@ Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 - **Honest content:** counts, ratings and "popular locations" come from the database. Demo listings and sample reviews are labelled. The EstateAI section is a clearly labelled illustration, not a working feature, and has no link until Phase 5.
 - **Initials avatars:** brokers without a photo show their initials, drawn locally (no third-party image service).
 - **Footer:** contact email and social links are placeholders. Edit the `CONTACT` and `SOCIAL_LINKS` constants at the top of `client/src/components/Footer.jsx`.
-- **Navbar:** "AI Assistant" is added in Phase 5. Review submission and the favorite button arrive in Phase 4.
+- **Navbar:** "AI Assistant" is added in Phase 5. 
 
-=======
->>>>>>> origin/main
 ## Design decisions (Phase 2)
 
 - **Auth:** JWT in an HTTP-only cookie. The user is re-loaded from MySQL on every request, so suspending a user takes effect immediately.
@@ -211,11 +215,7 @@ Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 
 - [x] Phase 1 – Setup, schema, skeleton
 - [x] Phase 2 – Auth, roles, property CRUD, search, details
-<<<<<<< HEAD
 - [x] Phase 3 – Homepage + circular property orbit
-=======
-- [ ] Phase 3 – Homepage + circular property orbit
->>>>>>> origin/main
-- [ ] Phase 4 – Comments, messaging, favorites, reviews, email
+- [x] Phase 4 – Comments, messaging, favorites, reviews, email
 - [ ] Phase 5 – EstateAI assistant
 - [ ] Phase 6 – Admin dashboard, tests, docs, Docker

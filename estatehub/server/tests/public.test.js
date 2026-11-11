@@ -1,5 +1,6 @@
 // Tests for the public (no login) endpoints used by the homepage and broker pages.
 // Requires MySQL running with the demo data from `npm run db:init`.
+process.env.NODE_ENV = 'test'; // disables rate limiting and must be set before the app is loaded
 const { test, after } = require('node:test');
 const assert = require('node:assert/strict');
 const request = require('supertest');

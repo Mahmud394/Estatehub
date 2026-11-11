@@ -1,38 +1,38 @@
 import { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Building2, Menu, X, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import NotificationBell from './NotificationBell.jsx';
 
 // "AI Assistant" is added in Phase 5 when that page exists, so there are no dead links in this build.
-=======
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Building2, Menu, X, ChevronDown } from 'lucide-react';
-import { useAuth } from '../context/AuthContext.jsx';
-
-// Links to pages that do not exist yet (Find a Broker, AI Assistant) are added in later phases,
-// so there are no dead links in this build.
->>>>>>> origin/main
 const LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/properties?purpose=sale', label: 'Buy' },
   { to: '/properties?purpose=rent', label: 'Rent' },
   { to: '/properties?category=commercial', label: 'Commercial' },
-<<<<<<< HEAD
   { to: '/brokers', label: 'Find a Broker' },
-=======
->>>>>>> origin/main
 ];
 
-const DASHBOARD = { broker: '/broker', client: null, admin: null };
+// Account-menu links per role. Admin tools arrive in Phase 6.
+const MENU = {
+  client: [
+    { to: '/messages', label: 'Messages' },
+    { to: '/favorites', label: 'Saved properties' },
+    { to: '/account', label: 'My account' },
+  ],
+  broker: [
+    { to: '/broker', label: 'My dashboard' },
+    { to: '/broker/messages', label: 'Messages' },
+    { to: '/broker/comments', label: 'Comments' },
+    { to: '/broker/profile', label: 'Profile settings' },
+  ],
+  admin: [],
+};
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-<<<<<<< HEAD
   const onHome = useLocation().pathname === '/'; // transparent over the hero until you scroll
-=======
->>>>>>> origin/main
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState(false);
   const [solid, setSolid] = useState(false);
@@ -56,17 +56,12 @@ export default function Navbar() {
 
   return (
     <header
-<<<<<<< HEAD
       className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
         solid || open
           ? 'bg-midnight/95 shadow-lg backdrop-blur'
           : onHome
             ? 'bg-transparent'
             : 'bg-midnight/90 backdrop-blur-sm'
-=======
-      className={`fixed inset-x-0 top-0 z-40 transition-all ${
-        solid || open ? 'bg-midnight/95 shadow-lg backdrop-blur' : 'bg-midnight/80 backdrop-blur-sm'
->>>>>>> origin/main
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6" aria-label="Main">
@@ -84,6 +79,7 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          {user && <NotificationBell />}
           {user ? (
             <div className="relative">
               <button
@@ -98,11 +94,11 @@ export default function Navbar() {
               {menu && (
                 <div role="menu" className="absolute right-0 mt-2 w-48 rounded bg-white py-2 text-sm text-midnight shadow-xl">
                   <p className="px-4 pb-2 text-xs uppercase tracking-wider text-gray-500">{user.role}</p>
-                  {DASHBOARD[user.role] && (
-                    <Link role="menuitem" to={DASHBOARD[user.role]} onClick={() => setMenu(false)} className="block px-4 py-2 hover:bg-ivory">
-                      My dashboard
+                  {MENU[user.role].map((m) => (
+                    <Link key={m.to} role="menuitem" to={m.to} onClick={() => setMenu(false)} className="block px-4 py-2 hover:bg-ivory">
+                      {m.label}
                     </Link>
-                  )}
+                  ))}
                   <button role="menuitem" onClick={handleLogout} className="block w-full px-4 py-2 text-left hover:bg-ivory">
                     Log out
                   </button>
@@ -119,14 +115,17 @@ export default function Navbar() {
           )}
         </div>
 
+        <div className="flex items-center gap-2 md:hidden">
+        {user && <NotificationBell />}
         <button
-          className="text-ivory md:hidden"
+          className="text-ivory"
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
         >
           {open ? <X /> : <Menu />}
         </button>
+        </div>
       </nav>
 
       {open && (
@@ -138,9 +137,9 @@ export default function Navbar() {
           ))}
           {user ? (
             <>
-              {DASHBOARD[user.role] && (
-                <Link to={DASHBOARD[user.role]} onClick={() => setOpen(false)} className="block py-2 text-sm text-ivory">My dashboard</Link>
-              )}
+              {MENU[user.role].map((m) => (
+                <Link key={m.to} to={m.to} onClick={() => setOpen(false)} className="block py-2 text-sm text-ivory">{m.label}</Link>
+              ))}
               <button onClick={handleLogout} className="block py-2 text-sm text-ivory">Log out</button>
             </>
           ) : (

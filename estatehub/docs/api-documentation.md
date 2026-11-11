@@ -88,7 +88,6 @@ Notes:
 - Land cannot have bedrooms/bathrooms.
 - `similar` (in `GET /properties/:id`) uses a transparent rule: same category and purpose, price within ±40%, same area first, then same city, then closest price.
 
-<<<<<<< HEAD
 ## Brokers (public)
 
 Only brokers whose verification status is `approved` and whose account is active are returned. Email, phone and password data are never included.
@@ -96,7 +95,8 @@ Only brokers whose verification status is `approved` and whose account is active
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/brokers` | none | Verified brokers. Query: `q` (name/company), `area` (service area), `page`, `limit` (max 50) |
-| GET | `/brokers/:id` | none | One broker with `listings` (approved + available) and `reviews` (visible) |
+| GET | `/brokers/:id` | none | One broker with `listings` (approved + available), `reviews` (visible) and `ratingBreakdown` |
+| GET | `/brokers/:id/reviews` | none | Paginated visible reviews + `summary` `{average, count, breakdown{1..5}}`. Query `page`, `limit` (max 50). 404 if the broker is not verified |
 
 Each broker has `averageRating` (null when there are no reviews), `reviewCount` and `activeListings`, all computed from the database.
 
@@ -107,6 +107,48 @@ Each broker has `averageRating` (null when there are no reviews), `reviewCount` 
 | GET | `/public/stats` | none | Real counts: `activeListings`, `verifiedBrokers`, `byCategory`, and `topAreas` (areas ordered by active listing count, with a photo from a listing) |
 | GET | `/public/reviews/recent?limit=3` | none | Latest visible reviews. Demo reviews have `"isDemo": true` so the UI labels them as sample content |
 
-=======
->>>>>>> origin/main
 More endpoints (comments, messages, favorites, reviews, notifications, admin, AI) are added in later phases.
+
+
+## Phase 4 – Interaction (all responses use `{success, message, data}`)
+
+### Comments (public on a listing)
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/comments?propertyId=&page=&limit=` | optional | Visible comments on an approved listing. Each has `canEdit` / `canDelete` for the viewer |
+| POST | `/comments` | client, or the listing's broker | `{propertyId, body}`. Max 1000 chars. Same text within 60 s gives 409. Notifies the broker (bell + email) |
+| PATCH | `/comments/:id` | author | `{body}`. 403 if a moderator hid it |
+| DELETE | `/comments/:id` | author, or admin (audit logged) | |
+| GET | `/comments/mine` | broker | Comments on my listings. Opening it clears `new_comment` notifications |
+
+### Favorites (clients only)
+| GET | `/favorites` | client | Saved properties still public |
+|---|---|---|---|
+| GET | `/favorites/ids` | client | Ids only (used for the hearts) |
+| POST | `/favorites` | client | `{propertyId}`. Saving twice is harmless |
+| DELETE | `/favorites/:propertyId` | client | |
+
+### Private messages
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/conversations` | client, broker | My conversations + `unreadTotal` |
+| POST | `/conversations` | client | `{propertyId` or `brokerId, body}`. Reuses an existing conversation. Only verified, active brokers |
+| GET | `/conversations/:id` | participant | Thread (latest 200). Strangers get 404. Admins read-only, logged in `audit_logs` |
+| POST | `/conversations/:id/messages` | participant | `{body}` max 2000 chars |
+| POST | `/conversations/:id/read` | participant | Marks the other side's messages as read |
+
+Clients appear to others as "First L.". Only the first unread message from a sender creates a bell entry and an email; emails never contain message text.
+
+### Reviews and ratings (clients)
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/reviews/eligibility/:brokerId` | client | `{eligible, review}`. Eligible once the client has messaged the broker |
+| POST | `/reviews` | client | `{brokerId, rating 1-5, body 10-1000 chars}`. One per broker (409 on repeat) |
+| PATCH | `/reviews/:id` | author | 403 if hidden by a moderator |
+| DELETE | `/reviews/:id` | author | |
+
+### Notifications
+| GET | `/notifications?limit=` | any | `{items, unreadCount}` |
+|---|---|---|---|
+| POST | `/notifications/:id/read` | owner | |
+| POST | `/notifications/read-all` | any | |
