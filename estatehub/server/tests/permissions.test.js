@@ -2,6 +2,7 @@
 // They use the real MySQL database from server/.env, create their own users with
 // random emails, and delete everything they created at the end.
 // Run (MySQL must be running and `npm run db:init` done once):  npm test
+process.env.NODE_ENV = 'test'; // disables rate limiting and must be set before the app is loaded
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const request = require('supertest');

@@ -1,6 +1,7 @@
 const { query } = require('../config/db');
 const { ok, AppError } = require('../utils/response');
 const { toDto, BASE_SELECT } = require('../services/propertyService');
+const { publicName } = require('../utils/names');
 
 // Only verified (admin-approved) brokers with an active account are shown publicly.
 // Ratings and listing counts are computed from real rows, never invented.
@@ -14,6 +15,23 @@ const BROKER_SELECT = `
   JOIN broker_profiles bp ON bp.user_id = u.id
   WHERE u.role = 'broker' AND u.status = 'active' AND bp.verification_status = 'approved'
 `;
+
+// Star counts for one broker, computed from visible reviews only: { average, count, breakdown: {1..5} }.
+async function ratingSummary(brokerId) {
+  const rows = await query(
+    "SELECT rating, COUNT(*) AS n FROM reviews WHERE broker_id = ? AND status = 'visible' GROUP BY rating",
+    [brokerId]
+  );
+  const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  let count = 0;
+  let sum = 0;
+  for (const r of rows) {
+    breakdown[r.rating] = Number(r.n);
+    count += Number(r.n);
+    sum += r.rating * Number(r.n);
+  }
+  return { average: count ? Math.round((sum / count) * 10) / 10 : null, count, breakdown };
+}
 
 function brokerDto(r) {
   return {
@@ -75,8 +93,33 @@ async function getOne(req, res, next) {
     );
     return ok(res, {
       ...brokerDto(row),
+      ratingBreakdown: (await ratingSummary(row.id)).breakdown,
       listings: listings.map((l) => toDto(l)),
       reviews: reviews.map(reviewDto),
+    });
+  } catch (err) { next(err); }
+}
+
+// Public, paginated reviews of one verified broker, plus the rating summary (average + stars breakdown).
+async function listReviews(req, res, next) {
+  try {
+    const { page, limit } = req.validQuery;
+    const [broker] = await query(`${BROKER_SELECT} AND u.id = ?`, [Number(req.params.id)]);
+    if (!broker) throw new AppError(404, 'Broker not found.');
+
+    const summary = await ratingSummary(broker.id);
+    // limit/offset are zod-validated integers
+    const rows = await query(
+      `SELECT r.id, r.rating, r.body, r.is_demo, r.created_at, u.full_name AS client_name
+       FROM reviews r JOIN users u ON u.id = r.client_id
+       WHERE r.broker_id = ? AND r.status = 'visible'
+       ORDER BY r.created_at DESC, r.id DESC LIMIT ${limit} OFFSET ${(page - 1) * limit}`,
+      [broker.id]
+    );
+    return ok(res, {
+      summary,
+      items: rows.map(reviewDto),
+      pagination: { page, limit, total: summary.count, totalPages: Math.max(1, Math.ceil(summary.count / limit)) },
     });
   } catch (err) { next(err); }
 }
@@ -88,9 +131,9 @@ function reviewDto(r) {
     body: r.body,
     isDemo: !!r.is_demo,
     createdAt: r.created_at,
-    clientName: r.client_name,
+    clientName: publicName(r.client_name, 'client'), // "First L." only
     brokerName: r.broker_name,
   };
 }
 
-module.exports = { list, getOne, reviewDto };
+module.exports = { list, getOne, listReviews, reviewDto };
