@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { z } = require('zod');
 const c = require('../controllers/brokerController');
 const { validate } = require('../middleware/validate');
+const { pageQuery } = require('../validators/interactionSchemas');
 
 const listQuery = z.object({
   q: z.string().trim().max(100).optional(),
@@ -12,5 +13,6 @@ const listQuery = z.object({
 
 router.get('/', validate(listQuery, 'query'), c.list);
 router.get('/:id(\\d+)', c.getOne);
+router.get('/:id(\\d+)/reviews', validate(pageQuery, 'query'), c.listReviews);
 
 module.exports = router;
