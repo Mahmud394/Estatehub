@@ -109,7 +109,10 @@ Each broker has `averageRating` (null when there are no reviews), `reviewCount` 
 
 More endpoints (comments, messages, favorites, reviews, notifications, admin, AI) are added in later phases.
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
 ## Phase 4 – Interaction (all responses use `{success, message, data}`)
 
 ### Comments (public on a listing)
