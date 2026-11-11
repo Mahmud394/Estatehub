@@ -8,7 +8,6 @@ const SOCIAL_LINKS = [
   // { label: 'LinkedIn', href: 'https://linkedin.com/company/your-page' },
 ];
 
-<<<<<<< HEAD
 const brokerLinks = [
   { label: 'Find a Broker', path: '/brokers' },
   { label: 'Join as a Broker', path: '/register?role=broker' },
@@ -22,10 +21,13 @@ const socialLinks = [
   { icon: Linkedin, label: 'LinkedIn', href: null },
 ];
 
+<<<<<<< HEAD
+=======
 =======
 const col = 'text-sm font-semibold uppercase tracking-wider text-gold';
 const link = 'hover:text-gold';
 
+>>>>>>> origin/main
 >>>>>>> origin/main
 export default function Footer() {
   return (
@@ -255,6 +257,8 @@ export default function Footer() {
             <span className="mx-2 text-gold">•</span>
             Built for better property discovery
           </p>
+<<<<<<< HEAD
+=======
 =======
     <footer className="bg-midnight text-ivory/80">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
@@ -298,6 +302,7 @@ export default function Footer() {
               ))}
             </ul>
           )}
+>>>>>>> origin/main
 >>>>>>> origin/main
         </div>
       </div>

@@ -5,7 +5,11 @@ Smart real estate marketplace (React + Express + MySQL). University Software Eng
 <<<<<<< HEAD
 **Status:** Phase 4 of 6 complete (comments, private messaging, favorites, broker reviews and ratings, notifications and e-mail).
 =======
+<<<<<<< HEAD
+**Status:** Phase 4 of 6 complete (comments, private messaging, favorites, broker reviews and ratings, notifications and e-mail).
+=======
 **Status:** Phase 3 of 6 complete (premium homepage with the circular property orbit, broker directory and profiles, legal pages).
+>>>>>>> origin/main
 >>>>>>> origin/main
 
 ## Folder structure
@@ -24,7 +28,11 @@ estatehub/
 <<<<<<< HEAD
 │       ├── hooks/          useApi.js, useMediaQuery.js, usePolling.js
 =======
+<<<<<<< HEAD
+│       ├── hooks/          useApi.js, useMediaQuery.js, usePolling.js
+=======
 │       ├── hooks/          useApi.js, useMediaQuery.js
+>>>>>>> origin/main
 >>>>>>> origin/main
 │       ├── services/api.js
 │       ├── styles/index.css
@@ -41,7 +49,11 @@ estatehub/
 <<<<<<< HEAD
 │                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile, BrokerComments)
 =======
+<<<<<<< HEAD
+│                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile, BrokerComments)
+=======
 │                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile)
+>>>>>>> origin/main
 >>>>>>> origin/main
 ├── server/                 Express REST API
 │   ├── package.json
@@ -52,6 +64,9 @@ estatehub/
 │       ├── app.js
 │       ├── config/         env.js, db.js
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> origin/main
 │       ├── routes/         index.js, health.js, auth.js, properties.js, brokers.js, public.js,
 │       │                   comments.js, favorites.js, conversations.js, reviews.js, notifications.js
 │       ├── controllers/    authController, propertyController, brokerController, publicController,
@@ -59,6 +74,11 @@ estatehub/
 │       │                   reviewController, notificationController
 │       ├── services/       propertyService.js, mailService.js (e-mail), notificationService.js
 │       ├── validators/     authSchemas.js, propertySchemas.js, interactionSchemas.js (zod)
+<<<<<<< HEAD
+│       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
+│       └── utils/          response.js, initDb.js, seedDemo.js, names.js, testMail.js
+│   └── tests/              permissions.test.js, public.test.js, interactions.test.js, unit.test.js
+=======
 │       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
 │       └── utils/          response.js, initDb.js, seedDemo.js, names.js, testMail.js
 │   └── tests/              permissions.test.js, public.test.js, interactions.test.js, unit.test.js
@@ -70,6 +90,7 @@ estatehub/
 │       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
 │       └── utils/          response.js, initDb.js, seedDemo.js
 │   └── tests/              permissions.test.js (auth, roles, property rules), public.test.js
+>>>>>>> origin/main
 >>>>>>> origin/main
 ├── database/schema.sql     All tables, keys, indexes
 ├── docs/                   api-documentation.md, er-diagram.md
@@ -199,7 +220,11 @@ Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 <<<<<<< HEAD
 1. Log in as `client1@gmail.com` / `Demo@12345` (or register a client). The navbar now has the bell and the menu has **Messages**, **Saved properties**, **My account**.
 =======
+<<<<<<< HEAD
+1. Log in as `client1@gmail.com` / `Demo@12345` (or register a client). The navbar now has the bell and the menu has **Messages**, **Saved properties**, **My account**.
+=======
 1. Log in as `client1@estatehub.demo` / `Demo@12345` (or register a client). The navbar now has the bell and the menu has **Messages**, **Saved properties**, **My account**.
+>>>>>>> origin/main
 >>>>>>> origin/main
 2. Open a property: tap the heart, write a **comment**, and send a **private message** to the broker.
 3. Open the broker's profile (`/brokers/<id>`). After you have messaged them you can give a **1-5 star rating and review**; edit or delete it later. The average and the 5-to-1 breakdown update at once.
@@ -235,7 +260,11 @@ Emails only contain the property title and a link to your dashboard, never messa
 <<<<<<< HEAD
 - **Navbar:** "AI Assistant" is added in Phase 5.
 =======
+<<<<<<< HEAD
+- **Navbar:** "AI Assistant" is added in Phase 5.
+=======
 - **Navbar:** "AI Assistant" is added in Phase 5. 
+>>>>>>> origin/main
 >>>>>>> origin/main
 
 ## Design decisions (Phase 2)

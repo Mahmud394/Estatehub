@@ -87,11 +87,7 @@ export default function PropertyDetails() {
           <div className="mt-6 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
             <span className="rounded bg-midnight px-2.5 py-1 text-gold">{p.purpose === 'sale' ? 'For Sale' : 'For Rent'}</span>
             <span className="rounded bg-forest/10 px-2.5 py-1 text-forest">{CATEGORY_LABELS[p.category]}</span>
-<<<<<<< HEAD
             
-=======
-            {p.isDemo && <span className="rounded bg-gray-100 px-2.5 py-1 text-gray-600">Demo listing</span>}
->>>>>>> origin/main
           </div>
           <div className="mt-3 flex items-start justify-between gap-3">
             <h1 className="text-4xl">{p.title}</h1>

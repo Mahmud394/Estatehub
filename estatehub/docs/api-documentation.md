@@ -32,8 +32,8 @@ Status codes: `200` ok, `201` created, `400` validation error, `401` not logged 
 `POST /auth/register` body:
 
 ```json
-{ "fullName": "Rahim Uddin", "email": "rahim@example.com", "password": "Secret123",
-  "role": "broker", "phone": "01700000000", "companyName": "Rahim Realty" }
+{ "fullName": "Mahmud Un Nabi", "email": "mahmud@gmail.com", "password": "demo12345",
+  "role": "broker", "phone": "01700000000", "companyName": "Mahmud Realty Ltd" }
 ```
 
 `role` can only be `client` or `broker`. Sending `admin` returns `400`. Admins are created directly in the database.
@@ -43,7 +43,7 @@ Success response (register/login):
 
 ```json
 { "success": true, "message": "Logged in.",
-  "data": { "user": { "id": 2, "fullName": "Rahim Uddin", "email": "rahim@example.com", "phone": null, "avatarUrl": null, "role": "broker" } } }
+  "data": { "user": { "id": 2, "fullName": "Mahmud Un Nabi", "email": "mahmud@gmail.com", "phone": null, "avatarUrl": null, "role": "broker" } } }
 ```
 
 ## Properties
@@ -71,7 +71,7 @@ Example: `GET /properties?area=Uttara&category=apartment&purpose=sale&maxPrice=8
                "price": 7500000, "currency": "BDT", "size": 1450, "sizeUnit": "sqft", "bedrooms": 3, "bathrooms": 3,
                "city": "Dhaka", "area": "Uttara", "approvalStatus": "approved", "availabilityStatus": "available",
                "isDemo": true, "primaryImage": "https://...", "createdAt": "...",
-               "broker": { "id": 2, "name": "Rahim Uddin (Demo)", "avatarUrl": null, "companyName": "Demo Realty Ltd.", "verified": true } } ],
+               "broker": { "id": 2, "name": "Mahmud Un Nabi", "avatarUrl": null, "companyName": "Mahmud Realty Ltd.", "verified": true } } ],
   "pagination": { "page": 1, "limit": 12, "total": 1, "totalPages": 1 } } }
 ```
 
@@ -111,7 +111,10 @@ More endpoints (comments, messages, favorites, reviews, notifications, admin, AI
 
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
 >>>>>>> origin/main
 ## Phase 4 – Interaction (all responses use `{success, message, data}`)
 

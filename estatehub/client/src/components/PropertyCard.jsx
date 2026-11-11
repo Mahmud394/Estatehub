@@ -4,7 +4,10 @@ import { formatPrice, formatSize, CATEGORY_LABELS } from '../utils/format.js';
 import Avatar from './Avatar.jsx';
 <<<<<<< HEAD
 import { getPropertyCardImage } from '../utils/propertyImages.js';
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/main
 >>>>>>> origin/main
 import FavoriteButton from './FavoriteButton.jsx';
 
@@ -12,7 +15,10 @@ const FALLBACK = 'https://picsum.photos/seed/estatehub-placeholder/900/600';
 
 <<<<<<< HEAD
 
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/main
 >>>>>>> origin/main
 export default function PropertyCard({ property: p }) {
   return (
@@ -30,9 +36,12 @@ export default function PropertyCard({ property: p }) {
           </span>
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
           {p.isDemo && (
             <span className="absolute bottom-3 left-3 rounded bg-white/90 px-2 py-1 text-[11px] text-gray-600">Demo listing</span>
           )}
+>>>>>>> origin/main
 >>>>>>> origin/main
           {p.availabilityStatus && p.availabilityStatus !== 'available' && (
             <span className="absolute bottom-3 right-3 rounded bg-red-700 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
@@ -40,6 +49,9 @@ export default function PropertyCard({ property: p }) {
             </span>
           )}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> origin/main
           
 =======
 >>>>>>> origin/main
