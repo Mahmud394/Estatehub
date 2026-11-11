@@ -20,18 +20,7 @@ import { toQuery } from '../services/api.js';
 const DEFAULT_LOCATIONS = [
   { city: 'Dhaka', area: '' }, { city: 'Dhaka', area: 'Uttara' }, { city: 'Dhaka', area: 'Bashundhara' },
   { city: 'Dhaka', area: 'Mirpur' }, { city: 'Chattogram', area: '' }, { city: 'Sylhet', area: '' },
-  
 ];
-
-
-const LOCATION_IMAGES = {
-  Dhaka: 'https://commons.wikimedia.org/wiki/Special:FilePath/Dhaka_Skyline.jpg',
-  Uttara: 'https://commons.wikimedia.org/wiki/Special:FilePath/Uttara%2C_Dhaka%2C_Bangladesh.jpg',
-  Bashundhara: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bashundhara_Residential_Area_Day.jpg',
-  Mirpur: 'https://commons.wikimedia.org/wiki/Special:FilePath/Mirpur.jpg',
-  Chattogram: 'https://commons.wikimedia.org/wiki/Special:FilePath/Chittagong_city_skyline.jpg',
-  Sylhet: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sylhet_city_01.jpg',
-};
 
 const TYPES = [
   { key: 'apartment', label: 'Apartments', icon: Building2, text: 'Flats in residential towers' },
@@ -296,19 +285,9 @@ export default function Home() {
 
 // F. Popular locations: real areas first (by listing count), then default search shortcuts up to 6.
 function LocationsSection({ areas }) {
-  const real = areas.map((a) => ({
-  city: a.city,
-  area: a.area,
-  count: a.count,
-  image: LOCATION_IMAGES[a.area] || LOCATION_IMAGES[a.city] || a.image || LOCATION_IMAGES.Dhaka,
-}));
+  const real = areas.map((a) => ({ city: a.city, area: a.area, count: a.count, image: a.image }));
   const seen = new Set(real.map((a) => `${a.city}|${a.area}`));
-  const extras = DEFAULT_LOCATIONS
-  .filter((d) => !seen.has(`${d.city}|${d.area}`))
-  .map((d) => ({
-    ...d,
-    image: LOCATION_IMAGES[d.area] || LOCATION_IMAGES[d.city] || LOCATION_IMAGES.Dhaka,
-  }));;
+  const extras = DEFAULT_LOCATIONS.filter((d) => !seen.has(`${d.city}|${d.area}`));
   const list = [...real, ...extras].slice(0, 6);
 
   return (
@@ -326,10 +305,7 @@ function LocationsSection({ areas }) {
             return (
               <Reveal key={`${l.city}-${l.area}`} delay={(i % 3) * 0.08}>
                 <Link to={`/properties${toQuery(query)}`} className="group relative block aspect-[16/10] overflow-hidden bg-midnight text-ivory">
-                  {l.image && <img src={l.image || LOCATION_IMAGES.Dhaka}
-                              alt={`${l.area || l.city} location`}
-                              loading="lazy"
-                              className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-105"/>}
+                  {l.image && <img src={l.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-105" />}
                   <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-midnight/90 via-midnight/20 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-5">
                     <p className="flex items-center gap-1 text-xs uppercase tracking-widest text-gold"><MapPin className="h-3.5 w-3.5" aria-hidden="true" />{l.area ? l.city : 'Bangladesh'}</p>

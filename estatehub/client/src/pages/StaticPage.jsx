@@ -6,7 +6,7 @@ const PAGES = {
     sections: [
       ['What it does', 'Visitors can browse land, apartments, houses and commercial properties. Registered clients can contact brokers, and brokers can publish and manage their own listings after an admin has reviewed them.'],
       ['How listings are checked', 'Every new or substantially edited listing waits for admin approval before it appears in public search. Private street addresses are never shown publicly.'],
-      ['content', 'Listings, brokers and reviews marked “demo” or “sample” are placeholders for development and presentations. They do not describe real properties or people.'],
+      ['Demo content', 'Listings, brokers and reviews marked “demo” or “sample” are placeholders for development and presentations. They do not describe real properties or people.'],
     ],
   },
   terms: {

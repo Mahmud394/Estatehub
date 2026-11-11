@@ -2,7 +2,11 @@
 
 Smart real estate marketplace (React + Express + MySQL). University Software Engineering capstone project.
 
+<<<<<<< HEAD
 **Status:** Phase 4 of 6 complete (comments, private messaging, favorites, broker reviews and ratings, notifications and e-mail).
+=======
+**Status:** Phase 3 of 6 complete (premium homepage with the circular property orbit, broker directory and profiles, legal pages).
+>>>>>>> origin/main
 
 ## Folder structure
 
@@ -17,7 +21,11 @@ estatehub/
 │   └── src/
 │       ├── main.jsx
 │       ├── App.jsx
+<<<<<<< HEAD
 │       ├── hooks/          useApi.js, useMediaQuery.js, usePolling.js
+=======
+│       ├── hooks/          useApi.js, useMediaQuery.js
+>>>>>>> origin/main
 │       ├── services/api.js
 │       ├── styles/index.css
 │       ├── context/        AuthContext.jsx, FavoritesContext.jsx
@@ -30,7 +38,11 @@ estatehub/
 │       │                   MessagesView, ReviewsSection, RatingSummary, StarRatingInput
 │       └── pages/          Home, Login, Register, Properties, PropertyDetails, Brokers, Messages, Favorites, Account,
 │                           BrokerPublicProfile, StaticPage (About/Terms/Privacy), NotFound,
+<<<<<<< HEAD
 │                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile, BrokerComments)
+=======
+│                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile)
+>>>>>>> origin/main
 ├── server/                 Express REST API
 │   ├── package.json
 │   ├── .env.example
@@ -39,6 +51,7 @@ estatehub/
 │       ├── server.js
 │       ├── app.js
 │       ├── config/         env.js, db.js
+<<<<<<< HEAD
 │       ├── routes/         index.js, health.js, auth.js, properties.js, brokers.js, public.js,
 │       │                   comments.js, favorites.js, conversations.js, reviews.js, notifications.js
 │       ├── controllers/    authController, propertyController, brokerController, publicController,
@@ -49,6 +62,15 @@ estatehub/
 │       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
 │       └── utils/          response.js, initDb.js, seedDemo.js, names.js, testMail.js
 │   └── tests/              permissions.test.js, public.test.js, interactions.test.js, unit.test.js
+=======
+│       ├── routes/         index.js, health.js, auth.js, properties.js, brokers.js, public.js
+│       ├── controllers/    authController, propertyController, brokerController, publicController
+│       ├── services/       propertyService.js (SQL + response shaping)
+│       ├── validators/     authSchemas.js, propertySchemas.js (zod)
+│       ├── middleware/     auth.js, validate.js, upload.js, rateLimit.js, errorHandler.js
+│       └── utils/          response.js, initDb.js, seedDemo.js
+│   └── tests/              permissions.test.js (auth, roles, property rules), public.test.js
+>>>>>>> origin/main
 ├── database/schema.sql     All tables, keys, indexes
 ├── docs/                   api-documentation.md, er-diagram.md
 ├── .gitignore
@@ -174,7 +196,11 @@ Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 
 **No database changes.** You do not need to run `db:init` again. Restart both servers, then:
 
+<<<<<<< HEAD
 1. Log in as `client1@gmail.com` / `Demo@12345` (or register a client). The navbar now has the bell and the menu has **Messages**, **Saved properties**, **My account**.
+=======
+1. Log in as `client1@estatehub.demo` / `Demo@12345` (or register a client). The navbar now has the bell and the menu has **Messages**, **Saved properties**, **My account**.
+>>>>>>> origin/main
 2. Open a property: tap the heart, write a **comment**, and send a **private message** to the broker.
 3. Open the broker's profile (`/brokers/<id>`). After you have messaged them you can give a **1-5 star rating and review**; edit or delete it later. The average and the 5-to-1 breakdown update at once.
 4. Log in as the broker in another browser window: the bell shows the new comment/message, **Messages** shows the thread (updates every few seconds), and **Comments** lists comments on your listings.
@@ -206,7 +232,11 @@ Emails only contain the property title and a link to your dashboard, never messa
 - **Honest content:** counts, ratings and "popular locations" come from the database. Demo listings and sample reviews are labelled. The EstateAI section is a clearly labelled illustration, not a working feature, and has no link until Phase 5.
 - **Initials avatars:** brokers without a photo show their initials, drawn locally (no third-party image service).
 - **Footer:** contact email and social links are placeholders. Edit the `CONTACT` and `SOCIAL_LINKS` constants at the top of `client/src/components/Footer.jsx`.
+<<<<<<< HEAD
 - **Navbar:** "AI Assistant" is added in Phase 5.
+=======
+- **Navbar:** "AI Assistant" is added in Phase 5. 
+>>>>>>> origin/main
 
 ## Design decisions (Phase 2)
 

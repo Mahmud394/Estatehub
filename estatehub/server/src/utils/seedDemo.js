@@ -11,6 +11,7 @@ const DEMO_PASSWORD = 'Demo@12345';
 const img = (seed) => `https://picsum.photos/seed/${seed}/900/600`;
 
 const properties = [
+<<<<<<< HEAD
   ['Modern 3-Bed Apartment in Uttara', 'Bright corner apartment with a south-facing balcony, near Sector 7 lake. ', 'apartment', 'sale', 7500000, 1450, 3, 3, 'Dhaka', 'Uttara', 'uttara1'],
   ['Family House with Garden', 'Two-storey house with a small garden and covered parking. ', 'house', 'sale', 28500000, 3200, 5, 4, 'Dhaka', 'Bashundhara', 'house2'],
   ['Cozy 2-Bed Flat for Rent', 'Quiet residential building, lift and generator backup.', 'apartment', 'rent', 28000, 1050, 2, 2, 'Dhaka', 'Mirpur', 'flat3'],
@@ -19,6 +20,16 @@ const properties = [
   ['Hillside View Apartment', 'Top-floor apartment with city and hill views. ', 'apartment', 'sale', 9800000, 1700, 3, 3, 'Chattogram', 'Khulshi', 'ctg6'],
   ['Spacious Family Flat', 'Well-ventilated flat close to schools and markets. ', 'apartment', 'rent', 35000, 1500, 3, 2, 'Sylhet', 'Zindabazar', 'syl7'],
   ['Office Floor in Business District', 'Open-plan office floor with parking. ', 'commercial', 'sale', 42000000, 4200, null, 3, 'Dhaka', 'Mirpur', 'office8'],
+=======
+  ['Modern 3-Bed Apartment in Uttara', 'Bright corner apartment with a south-facing balcony, near Sector 7 lake. DEMO LISTING.', 'apartment', 'sale', 7500000, 1450, 3, 3, 'Dhaka', 'Uttara', 'uttara1'],
+  ['Family House with Garden', 'Two-storey house with a small garden and covered parking. DEMO LISTING.', 'house', 'sale', 28500000, 3200, 5, 4, 'Dhaka', 'Bashundhara', 'house2'],
+  ['Cozy 2-Bed Flat for Rent', 'Quiet residential building, lift and generator backup. DEMO LISTING.', 'apartment', 'rent', 28000, 1050, 2, 2, 'Dhaka', 'Mirpur', 'flat3'],
+  ['Corner Commercial Space', 'Ground-floor shop space on a busy road, suitable for retail. DEMO LISTING.', 'commercial', 'rent', 120000, 1800, null, 1, 'Dhaka', 'Uttara', 'shop4'],
+  ['Residential Plot, 5 Katha', 'Rectangular plot in a planned residential area. DEMO LISTING.', 'land', 'sale', 18000000, 3600, null, null, 'Dhaka', 'Bashundhara', 'land5'],
+  ['Hillside View Apartment', 'Top-floor apartment with city and hill views. DEMO LISTING.', 'apartment', 'sale', 9800000, 1700, 3, 3, 'Chattogram', 'Khulshi', 'ctg6'],
+  ['Spacious Family Flat', 'Well-ventilated flat close to schools and markets. DEMO LISTING.', 'apartment', 'rent', 35000, 1500, 3, 2, 'Sylhet', 'Zindabazar', 'syl7'],
+  ['Office Floor in Business District', 'Open-plan office floor with parking. DEMO LISTING.', 'commercial', 'sale', 42000000, 4200, null, 3, 'Dhaka', 'Mirpur', 'office8'],
+>>>>>>> origin/main
 ];
 
 async function seed() {
@@ -36,17 +47,25 @@ async function seed() {
     return r.insertId;
   };
 
+<<<<<<< HEAD
   await addUser('Admin', 'admin@gmail.com', 'admin', null);
   const broker1 = await addUser('Mahmud Un Nabi', 'broker1@gmail.com', 'broker', '+8801700000001');
   const broker2 = await addUser('Abu Nushash', 'broker2@gmail.com', 'broker', '+8801700000002');
   const client1 = await addUser('Montasir Pritun', 'client1@gmail.com', 'client', null);
   await addUser('Abul Khair', 'client2@gmail.com', 'client', null);
+=======
+  await addUser('Demo Admin', 'admin@estatehub.demo', 'admin', null);
+  const broker1 = await addUser('Rahim Uddin (Demo)', 'broker1@estatehub.demo', 'broker', '+8801700000001');
+  const broker2 = await addUser('Nusrat Jahan (Demo)', 'broker2@estatehub.demo', 'broker', '+8801700000002');
+  const client1 = await addUser('Demo Client One', 'client1@estatehub.demo', 'client', null);
+  await addUser('Demo Client Two', 'client2@estatehub.demo', 'client', null);
+>>>>>>> origin/main
 
   await conn.execute(
     `INSERT INTO broker_profiles (user_id, company_name, bio, service_areas, verification_status, verified_at)
      VALUES (?,?,?,?, 'approved', NOW()), (?,?,?,?, 'approved', NOW())`,
-    [broker1, 'Realty Ltd.', 'broker profile.', 'Uttara, Bashundhara, Mirpur',
-     broker2, 'Homes BD', 'broker profile.', 'Chattogram, Sylhet, Dhaka']
+    [broker1, 'Demo Realty Ltd.', 'Demo broker profile.', 'Uttara, Bashundhara, Mirpur',
+     broker2, 'Demo Homes BD', 'Demo broker profile.', 'Chattogram, Sylhet, Dhaka']
   );
 
   for (let i = 0; i < properties.length; i++) {

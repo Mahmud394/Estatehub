@@ -2,18 +2,25 @@ import { Link } from 'react-router-dom';
 import { BedDouble, Bath, Ruler, MapPin } from 'lucide-react';
 import { formatPrice, formatSize, CATEGORY_LABELS } from '../utils/format.js';
 import Avatar from './Avatar.jsx';
+<<<<<<< HEAD
 import { getPropertyCardImage } from '../utils/propertyImages.js';
+=======
+>>>>>>> origin/main
 import FavoriteButton from './FavoriteButton.jsx';
 
+const FALLBACK = 'https://picsum.photos/seed/estatehub-placeholder/900/600';
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 export default function PropertyCard({ property: p }) {
   return (
     <article className="group relative overflow-hidden rounded border border-gray-200 bg-white transition-shadow hover:shadow-xl">
       <Link to={`/properties/${p.id}`} className="block">
         <div className="relative aspect-[3/2] overflow-hidden bg-gray-100">
           <img
-            src={getPropertyCardImage(p)}
+            src={p.primaryImage || FALLBACK}
             alt={p.title}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -21,12 +28,21 @@ export default function PropertyCard({ property: p }) {
           <span className="absolute left-3 top-3 rounded bg-midnight/85 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gold">
             {p.purpose === 'sale' ? 'For Sale' : 'For Rent'}
           </span>
+<<<<<<< HEAD
+=======
+          {p.isDemo && (
+            <span className="absolute bottom-3 left-3 rounded bg-white/90 px-2 py-1 text-[11px] text-gray-600">Demo listing</span>
+          )}
+>>>>>>> origin/main
           {p.availabilityStatus && p.availabilityStatus !== 'available' && (
             <span className="absolute bottom-3 right-3 rounded bg-red-700 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
               {p.availabilityStatus}
             </span>
           )}
+<<<<<<< HEAD
           
+=======
+>>>>>>> origin/main
         </div>
         <div className="p-4">
           <p className="font-serif text-2xl text-forest">{formatPrice(p.price, p.purpose)}</p>
@@ -42,6 +58,8 @@ export default function PropertyCard({ property: p }) {
           </ul>
         </div>
       </Link>
+      {/* The heart sits over the photo but outside the link, so there is no button inside a link */}
+      <div className="absolute right-3 top-3 z-10"><FavoriteButton propertyId={p.id} /></div>
       <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2">
           <Avatar name={p.broker.name} url={p.broker.avatarUrl} className="h-8 w-8 text-xs" />
