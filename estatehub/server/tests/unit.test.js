@@ -11,9 +11,15 @@ const s = require('../src/validators/interactionSchemas');
 test('publicName shows clients as "First L." and brokers with their full name', () => {
   assert.equal(publicName('Rahim Uddin Ahmed', 'client'), 'Rahim A.');
   assert.equal(publicName('Nusrat', 'client'), 'Nusrat');
+<<<<<<< HEAD
   assert.equal(publicName('Pritun', 'client'), 'Pritun');
   assert.equal(publicName('Mahmud Un Nabi', 'broker'), 'Mahmud Un Nabi');
   assert.equal(publicName('Nuhash', 'client'), 'Nuhash');
+=======
+  assert.equal(publicName('Demo Client One (Demo)', 'client'), 'Demo O.');
+  assert.equal(publicName('Rahim Uddin (Demo)', 'broker'), 'Rahim Uddin (Demo)');
+  assert.equal(publicName('', 'client'), 'User');
+>>>>>>> origin/main
 });
 
 test('notification emails contain the property title and one link, and escape HTML', () => {

@@ -10,7 +10,6 @@ import PropertyCard from '../components/PropertyCard.jsx';
 import Avatar from '../components/Avatar.jsx';
 import { LoadingSpinner, ErrorMessage } from '../components/StateViews.jsx';
 import { formatPrice, formatSize, formatDate, CATEGORY_LABELS } from '../utils/format.js';
-import { getPropertyGallery } from '../utils/propertyImages.js';
 
 // Small rating line for the broker card. Quietly shows nothing if the broker has no public page.
 function BrokerRating({ brokerId }) {
@@ -54,7 +53,7 @@ export default function PropertyDetails() {
   }
 
   const p = state.data;
-  const images = getPropertyGallery(p);
+  const images = p.images.length ? p.images : [{ id: 0, url: 'https://picsum.photos/seed/estatehub-placeholder/900/600' }];
   const notPublic = p.approvalStatus !== 'approved';
 
   return (

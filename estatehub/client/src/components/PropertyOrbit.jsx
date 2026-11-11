@@ -4,7 +4,7 @@ import { Pause, Play, BedDouble, Bath } from 'lucide-react';
 import { useMediaQuery } from '../hooks/useMediaQuery.js';
 import { formatPrice, formatSize, CATEGORY_LABELS } from '../utils/format.js';
 import Avatar from './Avatar.jsx';
-import { getPropertyCardImage } from '../utils/propertyImages.js';
+
 // ---------------------------------------------------------------------------
 // PropertyOrbit: the signature hero element.
 //
@@ -24,12 +24,12 @@ import { getPropertyCardImage } from '../utils/propertyImages.js';
 //    carousel instead (no animation at all).
 // ---------------------------------------------------------------------------
 
-const CARD_W = 240;
-const CARD_H = 240;
+const CARD_W = 200;
+const CARD_H = 250;
 const SECONDS_PER_REVOLUTION = 90;
 const START_ANGLE = 0.35;
 
-
+const FALLBACK_IMG = 'https://picsum.photos/seed/estatehub-placeholder/600/400';
 
 const smoothstep = (lo, hi, v) => { const t = Math.min(1, Math.max(0, (v - lo) / (hi - lo))); return t * t * (3 - 2 * t); };
 
@@ -46,71 +46,40 @@ function HeroCard({ property: p, orbit }) {
     <Link
       to={`/properties/${p.id}`}
       aria-label={`${p.title}, ${p.area}, ${formatPrice(p.price, p.purpose)}`}
-      className={`group relative block h-full w-full overflow-hidden rounded-full bg-white text-midnight shadow-xl ring-1 ring-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${
+      className={`group relative block h-full w-full overflow-hidden rounded-sm bg-white text-midnight shadow-xl ring-1 ring-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${
         orbit
-          ? 'transition-[transform,box-shadow] duration-300 ease-out hover:scale-[1.12] hover:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6)] focus-visible:scale-[1.12]'
+          ? 'transition-[transform,box-shadow] duration-300 ease-out hover:scale-[1.2] hover:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6)] focus-visible:scale-[1.2]'
           : ''
       }`}
     >
-      <div className="absolute inset-0">
+      <div className="relative h-[55%] overflow-hidden bg-gray-200">
         <img
-          src={getPropertyCardImage(p)}
-          alt={p.title}
+          src={p.primaryImage || FALLBACK_IMG}
+          alt=""
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          draggable="false"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 group-focus-visible:scale-110"
         />
-
-        <div className="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/45 to-midnight/10" />
+        <span className="absolute left-2 top-2 rounded-sm bg-midnight/85 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">
+          {p.purpose === 'sale' ? 'Sale' : 'Rent'}
+        </span>
+        {/* Extra details appear on hover/focus, over the photo, so the card never changes size */}
+        <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-gradient-to-t from-midnight/90 to-transparent px-2.5 pb-2 pt-6 text-[11px] text-ivory opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+          {p.bedrooms != null && <span className="flex items-center gap-1"><BedDouble className="h-3.5 w-3.5" aria-hidden="true" />{p.bedrooms}</span>}
+          {p.bathrooms != null && <span className="flex items-center gap-1"><Bath className="h-3.5 w-3.5" aria-hidden="true" />{p.bathrooms}</span>}
+          <span className="truncate">by {p.broker.name}</span>
+        </div>
       </div>
 
-      <span className="absolute left-1/2 top-5 -translate-x-1/2 rounded-full bg-midnight/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-gold">
-        {p.purpose === 'sale' ? 'Sale' : 'Rent'}
+      <span className="absolute right-3 top-[55%] -translate-y-1/2 rounded-full ring-2 ring-white">
+        <Avatar name={p.broker.name} url={p.broker.avatarUrl} tone="gold" className="h-8 w-8 text-[11px]" />
       </span>
 
-      <div className="absolute inset-x-3 bottom-5 flex flex-col items-center text-center text-white">
-        <p className="font-serif text-xl font-bold leading-tight text-gold">
-          {formatPrice(p.price, p.purpose)}
-        </p>
-
-        <h3 className="mt-1 max-w-full truncate text-sm font-semibold">
-          {p.title}
-        </h3>
-
-        <p className="mt-1 max-w-full truncate text-[11px] text-white/90">
-          {p.area}, {p.city}
-        </p>
-
-        <p className="mt-1 text-[10px] text-white/75">
-          {CATEGORY_LABELS[p.category]} · {formatSize(p.size)}
-        </p>
-
-        <div className="mt-2 flex items-center gap-1.5">
-          <Avatar
-            name={p.broker.name}
-            url={p.broker.avatarUrl}
-            tone="gold"
-            className="h-6 w-6 text-[9px]"
-          />
-          <span className="max-w-[110px] truncate text-[10px] text-white/90">
-            {p.broker.name}
-          </span>
-        </div>
-
-        <div className="mt-1 flex items-center gap-3 text-[10px] text-white/90">
-          {p.bedrooms != null && (
-            <span className="flex items-center gap-1">
-              <BedDouble className="h-3 w-3" aria-hidden="true" />
-              {p.bedrooms}
-            </span>
-          )}
-
-          {p.bathrooms != null && (
-            <span className="flex items-center gap-1">
-              <Bath className="h-3 w-3" aria-hidden="true" />
-              {p.bathrooms}
-            </span>
-          )}
-        </div>
+      <div className="p-3 pt-4">
+        <p className="font-serif text-xl leading-none text-forest">{formatPrice(p.price, p.purpose)}</p>
+        <h3 className="mt-1.5 truncate font-sans text-sm font-semibold">{p.title}</h3>
+        <p className="truncate text-xs text-gray-600">{p.area}, {p.city}</p>
+        <p className="mt-1 text-[11px] text-gray-500">{CATEGORY_LABELS[p.category]} · {formatSize(p.size)}</p>
       </div>
     </Link>
   );
@@ -258,7 +227,7 @@ export function OrbitCarousel({ properties }) {
         className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:px-6 min-[1200px]:mx-auto min-[1200px]:max-w-7xl min-[1200px]:justify-center"
       >
         {properties.map((p) => (
-          <li key={p.id} className="h-[240px] w-[240px] shrink-0 snap-center">
+          <li key={p.id} className="h-[300px] w-[240px] shrink-0 snap-center sm:w-[260px]">
             <HeroCard property={p} orbit={false} />
           </li>
         ))}
