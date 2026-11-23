@@ -10,8 +10,9 @@ router.use('/favorites', require('./favorites'));
 router.use('/conversations', require('./conversations'));
 router.use('/reviews', require('./reviews'));
 router.use('/notifications', require('./notifications'));
+router.use('/ai', require('./ai')); // EstateAI assistant (Phase 5)
 
-// Phase 5 and 6 register here:
-// router.use('/ai', ...); router.use('/admin', ...);
+// Phase 6 registers here:
+// router.use('/admin', ...);
 
 module.exports = router;

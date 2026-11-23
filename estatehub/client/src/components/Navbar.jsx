@@ -4,13 +4,13 @@ import { Building2, Menu, X, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import NotificationBell from './NotificationBell.jsx';
 
-// "AI Assistant" is added in Phase 5 when that page exists, so there are no dead links in this build.
 const LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/properties?purpose=sale', label: 'Buy' },
   { to: '/properties?purpose=rent', label: 'Rent' },
   { to: '/properties?category=commercial', label: 'Commercial' },
   { to: '/brokers', label: 'Find a Broker' },
+  { to: '/assistant', label: 'AI Assistant' },
 ];
 
 // Account-menu links per role. Admin tools arrive in Phase 6.

@@ -32,8 +32,8 @@ Status codes: `200` ok, `201` created, `400` validation error, `401` not logged 
 `POST /auth/register` body:
 
 ```json
-{ "fullName": "Mahmud Un Nabi", "email": "mahmud@gmail.com", "password": "demo12345",
-  "role": "broker", "phone": "01700000000", "companyName": "Mahmud Realty Ltd" }
+{ "fullName": "Rahim Uddin", "email": "rahim@example.com", "password": "Secret123",
+  "role": "broker", "phone": "01700000000", "companyName": "Rahim Realty" }
 ```
 
 `role` can only be `client` or `broker`. Sending `admin` returns `400`. Admins are created directly in the database.
@@ -43,7 +43,7 @@ Success response (register/login):
 
 ```json
 { "success": true, "message": "Logged in.",
-  "data": { "user": { "id": 2, "fullName": "Mahmud Un Nabi", "email": "mahmud@gmail.com", "phone": null, "avatarUrl": null, "role": "broker" } } }
+  "data": { "user": { "id": 2, "fullName": "Rahim Uddin", "email": "rahim@example.com", "phone": null, "avatarUrl": null, "role": "broker" } } }
 ```
 
 ## Properties
@@ -71,7 +71,7 @@ Example: `GET /properties?area=Uttara&category=apartment&purpose=sale&maxPrice=8
                "price": 7500000, "currency": "BDT", "size": 1450, "sizeUnit": "sqft", "bedrooms": 3, "bathrooms": 3,
                "city": "Dhaka", "area": "Uttara", "approvalStatus": "approved", "availabilityStatus": "available",
                "isDemo": true, "primaryImage": "https://...", "createdAt": "...",
-               "broker": { "id": 2, "name": "Mahmud Un Nabi", "avatarUrl": null, "companyName": "Mahmud Realty Ltd.", "verified": true } } ],
+               "broker": { "id": 2, "name": "Rahim Uddin (Demo)", "avatarUrl": null, "companyName": "Demo Realty Ltd.", "verified": true } } ],
   "pagination": { "page": 1, "limit": 12, "total": 1, "totalPages": 1 } } }
 ```
 
@@ -109,13 +109,6 @@ Each broker has `averageRating` (null when there are no reviews), `reviewCount` 
 
 More endpoints (comments, messages, favorites, reviews, notifications, admin, AI) are added in later phases.
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
->>>>>>> origin/main
 ## Phase 4 – Interaction (all responses use `{success, message, data}`)
 
 ### Comments (public on a listing)
@@ -158,3 +151,29 @@ Clients appear to others as "First L.". Only the first unread message from a sen
 |---|---|---|---|
 | POST | `/notifications/:id/read` | owner | |
 | POST | `/notifications/read-all` | any | |
+
+## Phase 5 – EstateAI (public, rate limited to 20 messages per minute per IP)
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/ai/status` | none | `{mode: "llm" \| "rules"}`. Says whether smart mode (LLM key) is on. Never returns keys or provider details |
+| POST | `/ai/chat` | none | Body `{message (1-500 chars), context?}`. `context` is the `filters` object of the previous answer, used for follow-ups; it is cleaned again on the server |
+
+`POST /ai/chat` returns:
+
+```json
+{
+  "intent": "search | faq | greeting | advice | reset | other",
+  "mode": "rules | llm",
+  "reply": "I found 2 listings for ...",
+  "filters": { "purpose": "rent", "city": "Dhaka", "area": "Mirpur", "maxPrice": 30000 },
+  "listings": [ { "id": 2, "title": "...", "price": 28000, "...": "same public shape as GET /properties" } ],
+  "total": 2,
+  "relaxed": [],
+  "suggestions": ["Cheapest first", "Start over"],
+  "searchPath": "/properties?purpose=rent&city=Dhaka",
+  "link": null
+}
+```
+
+Rules: only approved and available listings are returned; no email, phone or address fields exist in the response; `relaxed` lists the filters that were dropped (for example `["bedrooms"]`) when nothing matched everything; invalid bodies (empty, over 500 characters, unknown fields) return 400.

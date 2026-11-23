@@ -22,6 +22,18 @@ const env = {
     pass: process.env.SMTP_PASS || '',
     from: process.env.MAIL_FROM || 'EstateHub <no-reply@estatehub.local>',
   },
+  // EstateAI. With no LLM_API_KEY the assistant uses its built-in rule-based mode (free, offline).
+  // LLM_PROVIDER: 'anthropic' (default) or 'openai' (any OpenAI-compatible API).
+  llm: (() => {
+    const provider = (process.env.LLM_PROVIDER || 'anthropic').toLowerCase() === 'openai' ? 'openai' : 'anthropic';
+    return {
+      apiKey: process.env.LLM_API_KEY || '',
+      provider,
+      model: process.env.LLM_MODEL || (provider === 'openai' ? 'gpt-4o-mini' : 'claude-haiku-5-5'),
+      baseUrl: process.env.LLM_BASE_URL || (provider === 'openai' ? 'https://api.openai.com/v1' : 'https://api.anthropic.com'),
+      timeoutMs: Number(process.env.LLM_TIMEOUT_MS) || 8000,
+    };
+  })(),
 };
 
 if (!env.jwtSecret || env.jwtSecret.startsWith('change_me')) {
