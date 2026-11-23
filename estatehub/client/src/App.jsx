@@ -15,6 +15,7 @@ import PropertyForm from './pages/broker/PropertyForm.jsx';
 import BrokerProfile from './pages/broker/BrokerProfile.jsx';
 import BrokerComments from './pages/broker/BrokerComments.jsx';
 import Messages from './pages/Messages.jsx';
+import Assistant from './pages/Assistant.jsx';
 import Favorites from './pages/Favorites.jsx';
 import Account from './pages/Account.jsx';
 
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/brokers" element={<Brokers />} />
+        <Route path="/assistant" element={<Assistant />} />
         <Route path="/brokers/:id" element={<BrokerPublicProfile />} />
         <Route path="/about" element={<StaticPage page="about" />} />
         <Route path="/terms" element={<StaticPage page="terms" />} />

@@ -24,4 +24,14 @@ const writeLimiter = rateLimit({
   message: { success: false, message: 'You are doing that too quickly. Please wait a moment.', errors: null },
 });
 
-module.exports = { authLimiter, writeLimiter };
+// EstateAI: 20 messages per minute per IP (each message may call a paid LLM).
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip,
+  message: { success: false, message: 'EstateAI is getting a lot of messages from you. Please wait a moment.', errors: null },
+});
+
+module.exports = { authLimiter, writeLimiter, aiLimiter };
