@@ -65,7 +65,9 @@ function buildNotification({ headline, propertyTitle, path, linkLabel }) {
 // Fire-and-forget helper used by controllers (the HTTP response does not wait for SMTP).
 function notifyByEmail(to, subject, parts) {
   const { text, html } = buildNotification(parts);
-  sendMail({ to, subject, text, html });
+  const sending = sendMail({ to, subject, text, html });
+  // On Vercel a function is frozen right after the response, so tell it to wait for the email to finish.
+  try { require('@vercel/functions').waitUntil(sending); } catch { /* not on Vercel: nothing to do */ }
 }
 
 module.exports = { sendMail, notifyByEmail, buildNotification };

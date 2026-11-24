@@ -5,7 +5,11 @@ const env = require('./env');
 const pool = mysql.createPool({
   ...env.db,
   waitForConnections: true,
-  connectionLimit: 10,
+  // Serverless: every function instance has its own small pool, so keep it small to stay under the database's connection limit
+  connectionLimit: process.env.VERCEL ? 3 : 10,
+  maxIdle: process.env.VERCEL ? 1 : 10,
+  idleTimeout: 60000,
+  enableKeepAlive: true,
   decimalNumbers: true, // return DECIMAL columns as numbers
 });
 

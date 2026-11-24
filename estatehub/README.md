@@ -128,7 +128,7 @@ Open http://localhost:5173. The page should show **API: up · Database: up**.
 |---------|-----|
 | `ER_ACCESS_DENIED_ERROR` | Wrong `DB_USER`/`DB_PASSWORD` in `server/.env` |
 | `ECONNREFUSED 3306` | MySQL isn't running – start the MySQL service |
-| `bcrypt` fails to install on Windows | Install Node LTS again, or run `npm install` once more; if it persists, tell me and I'll switch to `bcryptjs` |
+| Password library | The project now uses `bcryptjs` (pure JavaScript, installs everywhere, same hash format as `bcrypt`). Run `npm install` in `server` once after updating |
 | Page says "Problem: Failed to fetch" | Backend isn't running on port 5000 |
 | Port already in use | Change `PORT` in `server/.env` and the proxy target in `client/vite.config.js` |
 
@@ -282,6 +282,17 @@ docker compose exec server npm run db:init      (first time only: tables + demo 
 ```
 
 Open http://localhost:8080. Files: `docker-compose.yml`, `server/Dockerfile`, `client/Dockerfile`, `client/nginx.conf`, `.dockerignore`. This is for demos, not a hardened production setup.
+
+## Deploy on Vercel (real hosting)
+
+This copy is ready for Vercel: the React app is served as static files and the Express API runs as one serverless function (`api/index.js`). Full step-by-step guide: **`docs/vercel-deploy.md`**. Short version:
+
+1. Create a cloud MySQL database and a Vercel Blob store (photos).
+2. Push the project to GitHub and import it in Vercel.
+3. Add the environment variables from `server/.env.example` in the Vercel dashboard.
+4. From your PC run `npm run db:init:prod` and `npm run create-admin` (inside `server`) against the cloud database. **Never run `npm run db:init` against it**: that command drops the tables and adds demo data.
+
+What changed for hosting: photos go to Vercel Blob when `BLOB_READ_WRITE_TOKEN` is set (local `uploads/` is still used on your PC), photos are uploaded one at a time with a 4 MB limit, database SSL (`DB_SSL=true`), emails finish before the function sleeps, and `bcryptjs` replaces `bcrypt`.
 
 ## Design decisions (Phase 3)
 

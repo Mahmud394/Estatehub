@@ -66,14 +66,24 @@ export default function PropertyForm() {
   const upload = async (e) => {
     const files = e.target.files;
     if (!files.length) return;
-    const data = new FormData();
-    [...files].forEach((f) => data.append('images', f));
     setError(''); setNotice('');
-    try {
-      setImages(await api(`/properties/${id}/images`, { method: 'POST', body: data }));
-      setNotice('Photos uploaded.');
-    } catch (err) { setError(err.message); }
+    const list = [...files];
     e.target.value = '';
+    const tooBig = list.find((f) => f.size > 4 * 1024 * 1024);
+    if (tooBig) { setError(`"${tooBig.name}" is larger than 4 MB. Please choose a smaller photo.`); return; }
+    // One photo per request keeps every request small (hosting limits request size)
+    let done = 0;
+    try {
+      for (const f of list) {
+        const data = new FormData();
+        data.append('images', f);
+        setImages(await api(`/properties/${id}/images`, { method: 'POST', body: data }));
+        done += 1;
+      }
+      setNotice(done === 1 ? 'Photo uploaded.' : `${done} photos uploaded.`);
+    } catch (err) {
+      setError(done ? `${done} uploaded, then: ${err.message}` : err.message);
+    }
   };
 
   const makePrimary = async (imgId) => {
@@ -138,7 +148,7 @@ export default function PropertyForm() {
       {editing && (
         <section className="mt-12" aria-labelledby="photos">
           <h2 id="photos" className="text-2xl">Photos</h2>
-          <p className="text-sm text-gray-600">JPG, PNG or WebP, up to 5 MB each (max 12 per listing).</p>
+          <p className="text-sm text-gray-600">JPG, PNG or WebP, up to 4 MB each (max 12 per listing).</p>
           <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={upload} aria-label="Upload photos"
             className="mt-3 block text-sm file:mr-3 file:rounded file:border-0 file:bg-forest file:px-4 file:py-2 file:text-white" />
           <ul className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">

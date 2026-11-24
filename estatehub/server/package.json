@@ -9,10 +9,14 @@
     "start": "node src/server.js",
     "db:init": "node src/utils/initDb.js",
     "test": "node --test",
-    "mail:test": "node src/utils/testMail.js"
+    "mail:test": "node src/utils/testMail.js",
+    "db:init:prod": "node src/utils/initProd.js",
+    "create-admin": "node src/utils/createAdmin.js"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "@vercel/blob": "^0.27.3",
+    "@vercel/functions": "^1.5.0",
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

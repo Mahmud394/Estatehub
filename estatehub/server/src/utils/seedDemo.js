@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const env = require('../config/env');
 
 // DEMO DATA ONLY. Every property/review inserted here is flagged is_demo = 1.
