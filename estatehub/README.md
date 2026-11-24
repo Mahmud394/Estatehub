@@ -208,18 +208,29 @@ Try these messages:
 
 1. `3 bedroom apartment for sale in Uttara under 1 crore` : you get real listings and a "What I searched for" row of filter chips.
 2. `cheapest first`, then `only for rent` : follow-up messages refine the previous search.
-3. `5 bedroom flat for rent in Mirpur` : if nothing matches everything, EstateAI removes the least important filter and tells you which one.
+3. `5 bedroom flat for rent in Mirpur` : if nothing matches, EstateAI says **sorry**, shows no wrong listings, and offers real alternatives with their count and lowest price (tap one to search it).
 4. `How do I contact a broker?`, `How do reviews work?` : answered from a built-in list of facts about the site.
 5. `Should I take a home loan?` : EstateAI refuses legal or financial advice.
 6. `New search` (button) or `start over` : clears the filters.
+
+**EstateAI v2 (smarter and honest).** More things to try:
+
+7. `flat for rent in Sylhet` (a place with no listings): "Sorry, EstateHub does not have any listings in Sylhet" plus the places that do have listings. It never silently searches everywhere.
+8. `average rent in Mirpur`, `how many flats are there`, `which areas do you have?` : answered with real numbers from the database (lowest, average, highest, counts). Small samples are flagged and it says the numbers are from EstateHub only.
+9. `best brokers in Uttara` : verified brokers with listings there, best rated first, with profile links. If none, it says sorry and shows the top brokers overall.
+10. `5 katha land in Savar`, `convert 5 katha to sqft`, `what is a decimal?` : katha, bigha, decimal and acre are converted (1 katha = 720 sq ft is assumed and stated).
+11. Typos and Banglish work: `Uttora`, `Chittagong`, `mirpur e flat bhara 20k`, `ফ্ল্যাট ভাড়া`.
+12. EstateHub questions: `what is EstateHub?`, `is it free?`, `how many photos can I upload?`, `why is my listing not showing?`, `who can read my messages?`, `how do I report a listing?`, `forgot password`, and more.
+13. Anything unrelated (`tell me a joke`) gets an honest "Sorry, I did not understand that" with what it can help with.
 
 ### How EstateAI works (good for your defense)
 
 1. **Understand** the sentence: `services/ai/nlp.js` (rules: words like *rent*, *flat*, *under*, amounts in *lakh/crore/k*, and place names that really exist in the database).
 2. **Optional smart mode:** if `LLM_API_KEY` is set, a language model also reads the sentence and returns filters as JSON (`services/ai/llmClient.js`). Rules win where they found a value; the model only fills gaps.
 3. **Check:** every filter, from the rules, the model or the browser, goes through `sanitizeFilters()` (`services/ai/filters.js`). Unknown places, impossible numbers and strange values are dropped.
-4. **Search the database:** the normal property search runs (parameterized SQL, **approved and available listings only**).
-5. **Answer:** the reply text is written by our own templates from the real result.
+4. **Check places:** `services/ai/places.js` forgives small typos and knows well-known Bangladeshi places, so a place that is not in our listings gets an honest "sorry" instead of a silent wide search.
+5. **Search or look up real data:** the normal property search runs (parameterized SQL, **approved and available listings only**). Price statistics, area counts and broker ratings come from read-only queries in `services/ai/insights.js` that reuse the same rules.
+6. **Answer:** the reply text is written by our own templates from the real result. Site questions are answered from `services/ai/knowledge.js`, unit questions by `services/ai/units.js`.
 
 So EstateAI cannot invent a property, a price or a broker. The model never sees users, messages, phone numbers, emails or addresses, and it never writes the answer.
 
@@ -237,7 +248,7 @@ Restart the server. The assistant page shows which mode is active. If the model 
 
 ### Tests
 
-`node --test tests/ai.unit.test.js` (no database, no internet) checks the parser, the filter cleaning, both LLM request formats, every failure path and the follow-up logic. `npm test` (needs MySQL) also runs `tests/ai.test.js`, which proves that only approved, available listings are returned and nothing private leaks.
+`node --test tests/ai.unit.test.js` (no database, no internet) checks the parser, Banglish and typo handling, katha conversion, the sorry and alternatives logic, statistics, brokers, the knowledge base, the filter cleaning, both LLM request formats, every failure path and the follow-up logic. `npm test` (needs MySQL) also runs `tests/ai.test.js`, which proves that only approved, available listings are returned and nothing private leaks.
 
 ## Try Phase 6 (admin, moderation, reports)
 

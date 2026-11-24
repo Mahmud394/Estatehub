@@ -52,8 +52,10 @@ const SORTS = {
   price_desc: 'p.price DESC, p.id DESC',
 };
 
-// Public search: only approved + available listings. All values go through placeholders.
-async function searchPublic(f) {
+// Builds the WHERE part of the public search (only approved + available listings).
+// All values go through placeholders. EstateAI reuses it for its counts and price statistics,
+// so the website search and the assistant can never disagree about what is "available".
+function buildPublicWhere(f) {
   const where = ["p.approval_status = 'approved'", "p.availability_status = 'available'"];
   const params = [];
 
@@ -71,6 +73,12 @@ async function searchPublic(f) {
   if (f.minSize !== undefined) { where.push('p.size >= ?'); params.push(f.minSize); }
   if (f.maxSize !== undefined) { where.push('p.size <= ?'); params.push(f.maxSize); }
   if (f.bedrooms !== undefined) { where.push('p.bedrooms >= ?'); params.push(f.bedrooms); }
+
+  return { where, params };
+}
+
+async function searchPublic(f) {
+  const { where, params } = buildPublicWhere(f);
 
   const whereSql = 'WHERE ' + where.join(' AND ');
   const [{ total }] = await query(`SELECT COUNT(*) AS total FROM properties p ${whereSql}`, params);
@@ -117,4 +125,5 @@ async function similarTo(row, limit = 4) {
   return rows.map((r) => toDto(r));
 }
 
-module.exports = { BASE_SELECT, toDto, searchPublic, findById, imagesFor, similarTo };
+module.exports = {
+  buildPublicWhere, BASE_SELECT, toDto, searchPublic, findById, imagesFor, similarTo };

@@ -9,7 +9,7 @@ All responses use this shape:
 { "success": false, "message": "What went wrong", "errors": { "price": "Price must be greater than 0." } }
 ```
 
-Authentication uses an **HTTP-only cookie** (`estatehub_token`) set by login/register. Browser requests must send credentials (`credentials: 'include'`). Passwords are hashed with bcrypt and never returned.
+Authentication uses an **HTTP-only cookie** (`estatehub_token`) set by login/register. Browser requests must send credentials (`credentials: 'include'`). Passwords are hashed with bcrypt (bcryptjs) and never returned.
 
 Status codes: `200` ok, `201` created, `400` validation error, `401` not logged in, `403` not allowed, `404` not found, `409` conflict, `429` too many attempts.
 
@@ -157,26 +157,27 @@ Clients appear to others as "First L.". Only the first unread message from a sen
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/ai/status` | none | `{mode: "llm" \| "rules"}`. Says whether smart mode (LLM key) is on. Never returns keys or provider details |
-| POST | `/ai/chat` | none | Body `{message (1-500 chars), context?}`. `context` is the `filters` object of the previous answer, used for follow-ups; it is cleaned again on the server |
+| POST | `/ai/chat` | none | Body `{message (1-500 chars), context?, apply?}`. `context` is the `filters` object of the previous answer, used for follow-ups; it is cleaned again on the server. `apply: true` means the context holds exact filters from a suggestion button, so the server searches with them directly |
 
 `POST /ai/chat` returns:
 
 ```json
 {
-  "intent": "search | faq | greeting | advice | reset | other",
+  "intent": "search | stats | areas | count | brokers | convert | faq | greeting | thanks | bye | advice | reset | other",
   "mode": "rules | llm",
   "reply": "I found 2 listings for ...",
   "filters": { "purpose": "rent", "city": "Dhaka", "area": "Mirpur", "maxPrice": 30000 },
   "listings": [ { "id": 2, "title": "...", "price": 28000, "...": "same public shape as GET /properties" } ],
   "total": 2,
   "relaxed": [],
-  "suggestions": ["Cheapest first", "Start over"],
+  "brokers": [],
+  "suggestions": ["Cheapest first", { "label": "Same in Mirpur (3)", "filters": { "area": "Mirpur", "city": "Dhaka" } }, "Start over"],
   "searchPath": "/properties?purpose=rent&city=Dhaka",
   "link": null
 }
 ```
 
-Rules: only approved and available listings are returned; no email, phone or address fields exist in the response; `relaxed` lists the filters that were dropped (for example `["bedrooms"]`) when nothing matched everything; invalid bodies (empty, over 500 characters, unknown fields) return 400.
+Rules: only approved and available listings are returned; no email, phone or address fields exist in the response; when nothing matches, `listings` is empty, the reply starts with "Sorry" and `suggestions` holds real alternatives as `{label, filters}` objects (send one back with `apply: true`); `relaxed` is kept for compatibility and is always empty; `brokers` holds `{id, name, companyName, listings, averageRating, reviewCount}` for broker questions; invalid bodies (empty, over 500 characters, unknown fields) return 400.
 
 ## Phase 6 – Reports and admin
 

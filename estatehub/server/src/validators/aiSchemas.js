@@ -5,6 +5,7 @@ const { z } = require('zod');
 const chatBody = z.object({
   message: z.string().trim().min(1, 'Type a message first.').max(500, 'Please keep your message under 500 characters.'),
   context: z.record(z.any()).optional(),
+  apply: z.boolean().optional(), // true = the context holds exact filters from a suggestion button
 }).strict();
 
 module.exports = { chatBody };

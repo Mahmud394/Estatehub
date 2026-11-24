@@ -19,6 +19,10 @@ const properties = [
   ['Hillside View Apartment', 'Top-floor apartment with city and hill views. ', 'apartment', 'sale', 9800000, 1700, 3, 3, 'Chattogram', 'Khulshi', 'ctg6'],
   ['Spacious Family Flat', 'Well-ventilated flat close to schools and markets. ', 'apartment', 'rent', 35000, 1500, 3, 2, 'Sylhet', 'Zindabazar', 'syl7'],
   ['Office Floor in Business District', 'Open-plan office floor with parking. ', 'commercial', 'sale', 42000000, 4200, null, 3, 'Dhaka', 'Mirpur', 'office8'],
+  ['Luxury Duplex Apartment', 'Modern duplex apartment with rooftop access and 24-hour security.', 'apartment', 'sale', 18500000, 2400, 4, 3, 'Dhaka', 'Mirpur', 'duplex8'],
+  ['Modern Office Space', 'Fully furnished office space with central air conditioning and elevator facilities.', 'commercial', 'rent', 85000, 2000, null, 2, 'Dhaka', 'Uttara', 'office9'],
+  ['Modern Family Apartment', 'Beautiful apartment with spacious rooms, balcony and nearby shopping facilities.', 'apartment', 'sale', 12500000, 1900, 3, 3, 'Sylhet', 'Zindabazar', 'syl10'],
+  ['Luxury Family House', 'Beautiful two-storey house with a garden, spacious rooms and private parking.', 'house', 'sale', 22000000, 2800, 4, 3, 'Chattogram', 'Khulshi', 'ctg11'],
 ];
 
 async function seed() {
@@ -37,8 +41,8 @@ async function seed() {
   };
 
   await addUser('Admin', 'admin@gmail.com', 'admin', null);
-  const broker1 = await addUser('Mahmud Un Nabi', 'broker1@gmail.com', 'broker', '+8801700000001');
-  const broker2 = await addUser('Abu Nuhash', 'broker2@gmail.com', 'broker', '+8801700000002');
+  const broker1 = await addUser('Mahmud Un Nabi', 'broker1@gmail.com', 'broker', '+8801767800701');
+  const broker2 = await addUser('Abu Nuhash', 'broker2@gmail.com', 'broker', '+8801725131215');
   const client1 = await addUser('Montasir Pritun', 'client1@gmail.com', 'client', null);
   await addUser('Abul Khair', 'client2@gmail.com', 'client', null);
 
@@ -66,7 +70,8 @@ async function seed() {
 
   await conn.execute(
     'INSERT INTO reviews (broker_id, client_id, rating, body, is_demo) VALUES (?,?,5,?,1)',
-    [broker1, client1, 'SAMPLE REVIEW (demo content, not a real customer).']
+    [broker1, client1, 'Professional, trustworthy, and highly responsive throughout the entire property journey.\
+      Made finding the perfect property a smooth and hassle-free experience.']
   );
 
   await conn.end();

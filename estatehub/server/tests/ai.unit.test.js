@@ -160,21 +160,25 @@ test('chat: follow-up message refines the previous filters', async () => {
   assert.deepEqual(reset.filters, {});
 });
 
-test('chat: no exact match drops filters one by one and says so honestly', async () => {
+test('chat: no exact match says sorry, shows no wrong listings, and offers real alternatives with counts', async () => {
   const search = fakeSearch((f) => (f.bedrooms ? [] : [item(9)]));
   const r = await chat({ message: '5 bedroom apartment for sale in Uttara' }, deps(search));
-  assert.deepEqual(r.relaxed, ['bedrooms']);
-  assert.equal(r.total, 1);
-  assert.match(r.reply, /No listing matches everything/);
-  assert.match(r.reply, /bedrooms filter/);
-  assert.equal(r.filters.bedrooms, undefined);
+  assert.equal(r.total, 0);
+  assert.deepEqual(r.listings, []);            // never fill the answer with listings that do not match
+  assert.match(r.reply, /^Sorry, I could not find any 5\+ bedroom apartment for sale in Uttara/);
+  assert.match(r.reply, /1 listing/);
+  const alt = r.suggestions.find((x) => typeof x === 'object');
+  assert.equal(alt.filters.bedrooms, undefined);  // the alternative keeps purpose, category and place
+  assert.equal(alt.filters.purpose, 'sale');
+  assert.equal(alt.filters.area, 'Uttara');
 });
 
 test('chat: nothing at all found', async () => {
-  const r = await chat({ message: 'land for sale in Sylhet' }, deps(fakeSearch(() => [])));
+  const r = await chat({ message: 'land for sale in Dhaka' }, deps(fakeSearch(() => [])));
   assert.equal(r.total, 0);
   assert.equal(r.searchPath, null);
-  assert.match(r.reply, /could not find any listings/);
+  assert.match(r.reply, /^Sorry, I could not find any/);
+  assert.match(r.reply, /Which areas do you have/);
 });
 
 test('chat: questions about the site are answered from the knowledge base, not searched', async () => {
@@ -214,4 +218,141 @@ test('formatBdt reads like the website', () => {
   assert.equal(formatBdt(7500000), '৳75 Lakh');
   assert.equal(formatBdt(25000000), '৳2.5 Crore');
   assert.equal(formatBdt(28000, 'rent'), '৳28,000/month');
+});
+
+// ---------------- EstateAI v2: honest answers, real data, more questions ----------------
+const DB = [
+  { id: 1, city: 'Dhaka', area: 'Uttara', category: 'apartment', purpose: 'sale', price: 9000000, bedrooms: 3 },
+  { id: 2, city: 'Dhaka', area: 'Mirpur', category: 'apartment', purpose: 'rent', price: 22000, bedrooms: 2 },
+  { id: 3, city: 'Dhaka', area: 'Mirpur', category: 'apartment', purpose: 'rent', price: 30000, bedrooms: 3 },
+];
+const matches = (f, p) => (!f.city || p.city === f.city) && (!f.area || p.area === f.area) && (!f.category || p.category === f.category) &&
+  (!f.purpose || p.purpose === f.purpose) && (f.maxPrice === undefined || p.price <= f.maxPrice) && (f.bedrooms === undefined || p.bedrooms >= f.bedrooms);
+const dbSearch = async (f) => { const items = DB.filter((p) => matches(f, p)); return { items: items.slice(0, f.limit), pagination: { total: items.length } }; };
+const calls = [];
+const insights = {
+  priceStats: async (f) => { const x = DB.filter((p) => matches(f, p)); return x.length ? { count: x.length, min: Math.min(...x.map((p) => p.price)), avg: Math.round(x.reduce((a, p) => a + p.price, 0) / x.length), max: Math.max(...x.map((p) => p.price)) } : { count: 0, min: null, avg: null, max: null }; },
+  areaOverview: async () => [{ city: 'Dhaka', area: 'Mirpur', n: 2 }, { city: 'Dhaka', area: 'Uttara', n: 1 }],
+  areaCounts: async () => [{ city: 'Dhaka', area: 'Mirpur', n: 2 }],
+  siteCounts: async () => ({ listings: 3, forSale: 1, forRent: 2, brokers: 1 }),
+  topBrokers: async (f) => { calls.push(f); return (!f.area || f.area === 'Mirpur') ? [{ id: 7, name: 'Rahim Broker', companyName: 'Acme', listings: 2, averageRating: 4.5, reviewCount: 6 }] : []; },
+};
+const v2 = { loadVocab: async () => vocab, search: dbSearch, insights, extract: async () => null };
+const ask = (message, extra = {}) => chat({ message, ...extra }, v2);
+
+test('v2: a place with no listings gets "sorry", not a silent search of everything', async () => {
+  const r = await ask('flat for rent in Rajshahi');
+  assert.equal(r.total, 0);
+  assert.deepEqual(r.listings, []);
+  assert.match(r.reply, /^Sorry, EstateHub does not have any listings in Rajshahi/);
+  assert.match(r.reply, /Mirpur \(2\)/);       // and it shows where listings really are
+  const r2 = await ask('house for sale in Narnia');
+  assert.match(r2.reply, /^Sorry, EstateHub does not have any listings in Narnia/);
+});
+
+test('v2: typos and other spellings still find places we really have', async () => {
+  assert.equal((await ask('flat for rent in Mirpurr')).filters.area, 'Mirpur');
+  assert.equal((await ask('flat for rent in Uttora')).filters.area, 'Uttara');
+  const c = parse('flat in chittagong');
+  assert.equal(c.city, 'Chattogram');
+  assert.equal(parse('flat in Gulshan').area, undefined); // not in our listings, handled as "sorry" above
+});
+
+test('v2: Banglish and Bangla words and numbers are understood', () => {
+  assert.deepEqual(parse('mirpur e flat bhara 20k'), { purpose: 'rent', category: 'apartment', area: 'Mirpur', city: 'Dhaka', maxPrice: 20000 });
+  assert.equal(parse('ফ্ল্যাট ভাড়া').purpose, 'rent');
+  assert.equal(parse('৩০ লাখ টাকায় জমি').maxPrice, 3000000);
+  assert.equal(parse('2-3 bedroom flat').bedrooms, 2);
+  assert.equal(parse('flat with swimming pool').q, 'pool');
+});
+
+test('v2: katha, decimal and bigha are converted to square feet, and the assumption is stated', async () => {
+  const f = parseSearch('5 katha land for sale in Uttara', vocab);
+  assert.equal(f.filters.minSize, 3060);
+  assert.equal(f.filters.maxSize, 4140);
+  assert.match(f.notes[0], /1 katha ≈ 720 sq ft/);
+  const r = await ask('convert 5 katha to sqft');
+  assert.equal(r.intent, 'convert');
+  assert.match(r.reply, /3,600 sq ft/);
+  assert.match(r.reply, /8\.26 decimals/);
+  const d = await ask('how many sqft in 1 decimal');
+  assert.match(d.reply, /436 sq ft/);
+});
+
+test('v2: price questions use real statistics and never invent numbers', async () => {
+  const r = await ask('what is the average rent in Mirpur?');
+  assert.equal(r.intent, 'stats');
+  assert.match(r.reply, /Lowest: ৳22,000\/month/);
+  assert.match(r.reply, /Average: ৳26,000\/month/);
+  assert.match(r.reply, /Highest: ৳30,000\/month/);
+  assert.match(r.reply, /only from the listings on EstateHub/);
+  const none = await ask('average price of land in Uttara');
+  assert.match(none.reply, /^Sorry, there are no available/);
+  assert.equal(/Average: ৳/.test(none.reply), false);
+  const notAboutProperty = await ask('how much does it cost to use estatehub?');
+  assert.equal(notAboutProperty.intent, 'faq');
+});
+
+test('v2: which areas, how many, and best brokers come from the database', async () => {
+  const areas = await ask('which areas do you have?');
+  assert.equal(areas.intent, 'areas');
+  assert.match(areas.reply, /Dhaka: Mirpur \(2\), Uttara \(1\)/);
+  const count = await ask('how many properties are there?');
+  assert.match(count.reply, /3 available listings \(1 for sale and 2 for rent\) and 1 verified broker/);
+  const best = await ask('best brokers in Mirpur');
+  assert.equal(best.intent, 'brokers');
+  assert.equal(best.brokers[0].name, 'Rahim Broker');
+  assert.match(best.reply, /★ 4\.5 from 6 reviews/);
+  const sorry = await ask('top brokers in Uttara');
+  assert.match(sorry.reply, /^Sorry, no verified broker has matching listings in Uttara/);
+  const faq = await ask('what does a verified broker badge mean?');
+  assert.equal(faq.intent, 'faq');
+  assert.equal((await ask('how do I contact a broker?')).intent, 'faq');
+});
+
+test('v2: many EstateHub questions are answered from the knowledge base', async () => {
+  const cases = [
+    ['what is estatehub?', /real estate marketplace/],
+    ['is it free to use estatehub?', /does not process payments/],
+    ['how do I report a listing?', /click "Report"/],
+    ['forgot password', /not available yet/],
+    ['how many photos can I upload?', /up to 12 photos/],
+    ['why is my listing not showing?', /Pending/],
+    ['who can read my messages?', /read-only mode/],
+    ['what is the difference between client and broker?', /Client:/],
+    ['how do i mark my listing sold', /available, sold, rented or unavailable/],
+    ['what is katha?', /720 sq ft/],
+    ['what does namjari mean', /land record/],
+    ['who made you?', /computer program/],
+  ];
+  for (const [q, re] of cases) {
+    const r = await ask(q);
+    assert.equal(r.intent, 'faq', q);
+    assert.match(r.reply, re, q);
+  }
+});
+
+test('v2: things outside EstateHub get an honest sorry, advice is refused', async () => {
+  const r = await ask('who won the cricket match yesterday');
+  assert.equal(r.intent, 'other');
+  assert.match(r.reply, /^Sorry/);
+  assert.match((await ask('should I take a home loan')).reply, /cannot give legal or financial advice/);
+  assert.equal((await ask('thanks')).intent, 'thanks');
+});
+
+test('v2: a tapped suggestion searches with its exact filters', async () => {
+  const r = await ask('Same in Mirpur (2)', { context: { purpose: 'rent', category: 'apartment', area: 'Mirpur', city: 'Dhaka' }, apply: true });
+  assert.equal(r.intent, 'search');
+  assert.equal(r.total, 2);
+  const bad = await ask('x', { context: { area: 'Atlantis' }, apply: true }); // nothing valid: falls back to normal handling
+  assert.notEqual(bad.intent, 'search');
+});
+
+test('v2: results always match what was asked (budget and bedrooms are real limits)', async () => {
+  const r = await ask('3 bedroom flat for rent in Mirpur under 25000');
+  assert.equal(r.total, 0);                       // the only 3 bedroom costs 30000
+  assert.deepEqual(r.listings, []);
+  const alt = r.suggestions.filter((x) => typeof x === 'object');
+  assert.ok(alt.length > 0);
+  for (const a of alt) assert.equal(a.filters.purpose, 'rent');   // alternatives never turn rent into sale
 });

@@ -75,11 +75,24 @@ test('ai: follow-up messages use the filters of the previous answer', async () =
   assert.equal(second.filters.area, AREA);
 });
 
-test('ai: when nothing matches everything it relaxes filters and tells the truth', async () => {
+test('ai: when nothing matches it says sorry and offers real alternatives (never wrong listings)', async () => {
   const d = (await ask(`5 bedroom flat for rent in ${AREA}`)).body.data;
-  assert.deepEqual(d.relaxed, ['bedrooms']);
-  assert.ok(d.listings.length > 0);
-  assert.match(d.reply, /No listing matches everything/);
+  assert.equal(d.total, 0);
+  assert.deepEqual(d.listings, []);
+  assert.match(d.reply, /^Sorry, I could not find any/);
+  const alt = d.suggestions.find((x) => typeof x === 'object');
+  assert.ok(alt, 'an alternative with real filters is offered');
+  const tapped = (await request(app).post('/api/ai/chat').send({ message: alt.label, context: alt.filters, apply: true })).body.data;
+  assert.ok(tapped.listings.length > 0);
+});
+
+test('ai: a place with no listings gets sorry, and real statistics come from the database', async () => {
+  const sorry = (await ask('flat for rent in Atlantisville')).body.data;
+  assert.match(sorry.reply, /^Sorry, EstateHub does not have any listings in Atlantisville/);
+  assert.equal(sorry.listings.length, 0);
+  const stats = (await ask(`average rent in ${AREA}`)).body.data;
+  assert.equal(stats.intent, 'stats');
+  assert.match(stats.reply, /Average: ৳/);
 });
 
 test('ai: responses never contain private data', async () => {

@@ -10,15 +10,38 @@ const CRORE = 10000000;
 
 const WORD_NUMBERS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 };
 
+// English, Banglish (Bangla written in English letters) and a few Bangla-script words.
 const CATEGORY_WORDS = {
-  apartment: ['apartment', 'apartments', 'flat', 'flats'],
-  house: ['house', 'houses', 'home', 'homes', 'villa', 'duplex', 'bungalow'],
-  land: ['land', 'plot', 'plots', 'jomi'],
-  commercial: ['commercial', 'shop', 'shops', 'office', 'offices', 'showroom', 'warehouse', 'store'],
+  apartment: ['apartment', 'apartments', 'flat', 'flats', 'ফ্ল্যাট', 'ফ্লাট', 'এপার্টমেন্ট'],
+  house: ['house', 'houses', 'home', 'homes', 'villa', 'duplex', 'bungalow', 'bari', 'basa', 'basha', 'bashar', 'বাসা', 'বাড়ি', 'বাড়ী'],
+  land: ['land', 'plot', 'plots', 'jomi', 'jami', 'জমি', 'প্লট'],
+  commercial: ['commercial', 'shop', 'shops', 'office', 'offices', 'showroom', 'warehouse', 'store', 'dokan', 'দোকান', 'অফিস'],
 };
-const SALE_WORDS = ['buy', 'buying', 'purchase', 'sale', 'sell', 'selling', 'kinbo', 'kinte'];
-const RENT_WORDS = ['rent', 'rental', 'rentals', 'lease', 'tolet', 'bhara', 'vara'];
-const FEATURE_WORDS = { parking: 'parking', garden: 'garden', lift: 'lift', elevator: 'lift', balcony: 'balcony', generator: 'generator' };
+const SALE_WORDS = ['buy', 'buying', 'purchase', 'sale', 'sell', 'selling', 'kinbo', 'kinte', 'kine', 'kena', 'bikri', 'becha', 'বিক্রি', 'কিনতে', 'কিনব'];
+const RENT_WORDS = ['rent', 'rental', 'rentals', 'lease', 'tolet', 'bhara', 'vara', 'bhaara', 'ভাড়া', 'ভাড়ায়'];
+const FEATURE_WORDS = {
+  parking: 'parking', garden: 'garden', lift: 'lift', elevator: 'lift', balcony: 'balcony', generator: 'generator',
+  pool: 'pool', swimming: 'pool', gym: 'gym', furnished: 'furnished', security: 'security', rooftop: 'rooftop', gas: 'gas',
+  wifi: 'wifi', 'sea view': 'sea view', 'river view': 'river view', 'lake view': 'lake view', corner: 'corner', 'south facing': 'south',
+};
+
+// Land units used in Bangladesh, converted to square feet (the unit the listings use).
+// A katha differs by region; 720 sq ft is the common Dhaka value, so replies always say what was assumed.
+const AREA_UNITS = {
+  sqft: 1, sft: 1,
+  katha: 720, kathas: 720, bigha: 14400, bighas: 14400,
+  decimal: 435.6, decimals: 435.6, shotok: 435.6, shatak: 435.6,
+  acre: 43560, acres: 43560,
+  sqm: 10.7639,
+};
+const UNIT_RE = '(?:sqft|sq\\.? ?ft|sft|square feet|square foot|sq feet|katha|kathas|bigha|bighas|decimals?|shotok|shatak|acres?|sqm|sq\\.? ?m|square met(?:er|re)s?)';
+const unitKey = (u) => {
+  const x = u.replace(/[. ]/g, '');
+  if (/^(sqft|squarefeet|squarefoot|sqfeet|sft)$/.test(x)) return 'sqft';
+  if (/^(sqm|squaremeters?|squaremetres?)$/.test(x)) return 'sqm';
+  return x;
+};
+const UNIT_NOTE = { katha: '1 katha ≈ 720 sq ft', bigha: '1 bigha = 20 katha ≈ 14,400 sq ft', decimal: '1 decimal ≈ 435.6 sq ft', shotok: '1 decimal ≈ 435.6 sq ft', shatak: '1 decimal ≈ 435.6 sq ft', acre: '1 acre = 43,560 sq ft', sqm: '1 sq m ≈ 10.76 sq ft' };
 
 const MAX_CUES = ['under', 'below', 'less than', 'within', 'up to', 'upto', 'max', 'maximum', 'at most', 'not more than', 'budget', 'cheaper than'];
 const MIN_CUES = ['above', 'over', 'more than', 'at least', 'min', 'minimum', 'starting', 'atleast', 'not less than', 'bigger than', 'larger than'];
@@ -30,7 +53,10 @@ const hasAny = (text, list) => list.some((w) => hasWord(text, w));
 function clean(message) {
   return String(message)
     .toLowerCase()
-    .replace(/৳|\btk\b|\btaka\b|\bbdt\b/g, ' ')
+    .replace(/[০-৯]/g, (d) => '০১২৩৪৫৬৭৮৯'.indexOf(d)) // Bangla digits -> 0-9
+    .replace(/৳|\btk\b|\btaka\b|\bbdt\b|টাকা/g, ' ')
+    .replace(/লাখ|লক্ষ/g, ' lakh ')
+    .replace(/কোটি/g, ' crore ')
     .replace(/(\d),(?=\d)/g, '$1') // 50,00,000 -> 5000000
     .replace(/\bto-let\b/g, 'tolet')
     .replace(/\bhome (loan|loans|financing|insurance)\b/g, '$1') // "home loan" is not a search for a home
@@ -63,24 +89,31 @@ function cueBefore(text, index, cues) {
 }
 
 function parseBedrooms(text) {
-  let m = text.match(/(\d+)\s*[- ]?\s*(?:bed|beds|bedroom|bedrooms|bhk|br)\b/);
+  // "2-3 bedroom" or "2 to 3 bedroom": the smaller number is the minimum
+  let m = text.match(/(\d+)\s*(?:-|to)\s*(\d+)\s*[- ]?\s*(?:bed|beds|bedroom|bedrooms|bhk|br|room|rooms)\b/);
+  if (m) return { value: Math.min(Number(m[1]), Number(m[2])), span: m[0] };
+  m = text.match(/(\d+)\s*[- ]?\s*(?:bed|beds|bedroom|bedrooms|bhk|br|room|rooms)\b/);
   if (m) return { value: Number(m[1]), span: m[0] };
-  m = text.match(new RegExp(`\\b(${Object.keys(WORD_NUMBERS).join('|')})\\s*[- ]?\\s*(?:bed|beds|bedroom|bedrooms)\\b`));
+  m = text.match(new RegExp(`\\b(${Object.keys(WORD_NUMBERS).join('|')})\\s*[- ]?\\s*(?:bed|beds|bedroom|bedrooms|room|rooms)\\b`));
   if (m) return { value: WORD_NUMBERS[m[1]], span: m[0] };
   return null;
 }
 
 function parseSizes(text) {
   const found = [];
-  const re = /(\d+(?:\.\d+)?)\s*(?:sqft|sq\.? ?ft|sft|square feet|square foot|sq feet)/g;
+  const re = new RegExp(`(\\d+(?:\\.\\d+)?)\\s*(${UNIT_RE})(?![a-z])`, 'g');
   let m;
-  while ((m = re.exec(text))) found.push({ value: Number(m[1]), index: m.index, span: m[0] });
+  while ((m = re.exec(text))) {
+    const key = unitKey(m[2]);
+    found.push({ value: Number(m[1]) * AREA_UNITS[key], index: m.index, span: m[0], unit: key, raw: Number(m[1]) });
+  }
   return found;
 }
 
 // vocab: { cities: [...], areas: [{city, area}] }
 function findPlaces(text, vocab) {
   const out = {};
+  const { ALIASES, fuzzyWord } = require('./places'); // loaded here because places.js imports this file
   const areas = [...vocab.areas].sort((a, b) => b.area.length - a.area.length);
   for (const a of areas) {
     if (hasWord(text, a.area.toLowerCase())) { out.area = a.area; out.city = a.city; break; }
@@ -89,10 +122,29 @@ function findPlaces(text, vocab) {
     const cities = [...vocab.cities].sort((a, b) => b.length - a.length);
     for (const c of cities) if (hasWord(text, c.toLowerCase())) { out.city = c; break; }
   }
-  // Dhaka is sometimes written "Dhaka city" or "Chittagong" for Chattogram
-  if (!out.city && hasWord(text, 'chittagong')) {
-    const c = vocab.cities.find((x) => x.toLowerCase() === 'chattogram');
-    if (c) out.city = c;
+  // other spellings: "Chittagong" for Chattogram, "Comilla" for Cumilla ...
+  if (!out.city && !out.area) {
+    for (const [alias, real] of Object.entries(ALIASES)) {
+      if (!hasWord(text, alias)) continue;
+      const c = vocab.cities.find((x) => x.toLowerCase() === real);
+      if (c) { out.city = c; break; }
+      const a = vocab.areas.find((x) => x.area.toLowerCase() === real);
+      if (a) { out.area = a.area; out.city = a.city; break; }
+    }
+  }
+  // a small typo ("Uttora", "Dhanmodi") still finds the place if it is one we really have
+  if (!out.city && !out.area) {
+    const names = [...new Set([...vocab.areas.map((a) => a.area), ...vocab.cities])].filter((n) => !/[ ']/.test(n));
+    const lower = names.map((n) => n.toLowerCase());
+    for (const w of text.split(/[^a-z]+/).filter((x) => x.length >= 5)) {
+      if (lower.includes(w)) continue;
+      const near = fuzzyWord(w, lower);
+      if (!near) continue;
+      const area = vocab.areas.find((a) => a.area.toLowerCase() === near);
+      if (area) { out.area = area.area; out.city = area.city; break; }
+      const city = vocab.cities.find((c) => c.toLowerCase() === near);
+      if (city) { out.city = city; break; }
+    }
   }
   return out;
 }
@@ -107,16 +159,18 @@ function parseSearch(message, vocab) {
   const reset = /\b(start over|new search|reset|clear( all)?( filters)?|from scratch|forget (that|it|everything))\b/.test(text);
 
   // 1) sizes and bedrooms are cut out first so their numbers are not mistaken for prices
+  const notes = [];
   for (const s of parseSizes(text)) {
-    if (cueBefore(text, s.index, MIN_CUES)) filters.minSize = s.value;
-    else if (cueBefore(text, s.index, MAX_CUES)) filters.maxSize = s.value;
+    if (cueBefore(text, s.index, MIN_CUES)) filters.minSize = Math.round(s.value);
+    else if (cueBefore(text, s.index, MAX_CUES)) filters.maxSize = Math.round(s.value);
     else { filters.minSize = Math.round(s.value * 0.85); filters.maxSize = Math.round(s.value * 1.15); }
+    if (s.unit !== 'sqft') notes.push(`${UNIT_NOTE[s.unit]}, so ${s.raw} ${s.unit} ≈ ${Math.round(s.value).toLocaleString('en-US')} sq ft`);
   }
-  text = text.replace(/(\d+(?:\.\d+)?)\s*(?:sqft|sq\.? ?ft|sft|square feet|square foot|sq feet)/g, ' SIZE ');
+  text = text.replace(new RegExp(`(\\d+(?:\\.\\d+)?)\\s*${UNIT_RE}(?![a-z])`, 'g'), ' SIZE ');
 
   const beds = parseBedrooms(text);
   if (beds) { filters.bedrooms = beds.value; text = text.replace(beds.span, ' BEDS '); }
-  text = text.replace(/\d+\s*(?:bath|baths|bathroom|bathrooms|katha|decimal)\b/g, ' ');
+  text = text.replace(/\d+\s*(?:bath|baths|bathroom|bathrooms)\b/g, ' ');
 
   // 2) prices
   const money = findMoney(text);
@@ -166,7 +220,7 @@ function parseSearch(message, vocab) {
     if (hasWord(text, word)) { filters.q = q; break; }
   }
 
-  return { filters, reset };
+  return { filters, reset, notes };
 }
 
-module.exports = { parseSearch, clean, hasAny, hasWord, LAKH, CRORE };
+module.exports = { parseSearch, clean, hasAny, hasWord, findMoney, LAKH, CRORE, AREA_UNITS, UNIT_RE, UNIT_NOTE, unitKey };
