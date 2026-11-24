@@ -42,3 +42,5 @@ erDiagram
 ```
 
 **Deletion rules:** deleting a user cascades to their profile, properties, comments, favorites and messages. Deleting a property cascades to images, comments and favorites, but keeps its conversations (property_id becomes NULL). Audit logs survive admin deletion (admin_id becomes NULL).
+
+**Phase 6 usage:** `reports` (reporter, target_type + target_id, reason, status, handled_by) is filled by `POST /api/reports` and closed by admins. `audit_logs` receives one row per admin action (approve/reject listing, verify/reject broker, suspend/activate user, hide/unhide comment or review, resolve/dismiss report, delete comment, view conversation). `target_id` is not a foreign key because it points at different tables depending on `target_type`.

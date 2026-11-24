@@ -12,7 +12,7 @@ router.use('/reviews', require('./reviews'));
 router.use('/notifications', require('./notifications'));
 router.use('/ai', require('./ai')); // EstateAI assistant (Phase 5)
 
-// Phase 6 registers here:
-// router.use('/admin', ...);
+router.use('/reports', require('./reports')); // report content (Phase 6)
+router.use('/admin', require('./admin')); // admin dashboard + moderation (Phase 6)
 
 module.exports = router;

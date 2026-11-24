@@ -6,6 +6,7 @@ import PropertyCard from '../components/PropertyCard.jsx';
 import ReviewsSection from '../components/ReviewsSection.jsx';
 import ContactBrokerForm from '../components/ContactBrokerForm.jsx';
 import Stars from '../components/Stars.jsx';
+import ReportButton from '../components/ReportButton.jsx';
 import { LoadingSpinner, EmptyState, ErrorMessage } from '../components/StateViews.jsx';
 
 export default function BrokerPublicProfile() {
@@ -44,6 +45,7 @@ export default function BrokerPublicProfile() {
               <MapPin className="h-4 w-4 text-gray-500" aria-hidden="true" /> {b.serviceAreas.join(', ')}
             </p>
           )}
+          <div className="mt-3"><ReportButton targetType="user" targetId={b.id} label="Report this broker" /></div>
         </div>
       </header>
 

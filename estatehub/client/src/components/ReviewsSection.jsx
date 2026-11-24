@@ -161,7 +161,7 @@ export default function ReviewsSection({ brokerId, brokerName }) {
       {list && list.items.length > 0 && (
         <>
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {list.items.map((r) => <ReviewCard key={r.id} review={r} />)}
+            {list.items.map((r) => <ReviewCard key={r.id} review={r} reportable={!!user && user.role !== 'admin' && r.id !== mine?.review?.id} />)}
           </div>
           {page < list.pagination.totalPages && (
             <div className="mt-6 text-center">

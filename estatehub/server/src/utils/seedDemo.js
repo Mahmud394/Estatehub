@@ -38,7 +38,7 @@ async function seed() {
 
   await addUser('Admin', 'admin@gmail.com', 'admin', null);
   const broker1 = await addUser('Mahmud Un Nabi', 'broker1@gmail.com', 'broker', '+8801700000001');
-  const broker2 = await addUser('Abu Nushash', 'broker2@gmail.com', 'broker', '+8801700000002');
+  const broker2 = await addUser('Abu Nuhash', 'broker2@gmail.com', 'broker', '+8801700000002');
   const client1 = await addUser('Montasir Pritun', 'client1@gmail.com', 'client', null);
   await addUser('Abul Khair', 'client2@gmail.com', 'client', null);
 

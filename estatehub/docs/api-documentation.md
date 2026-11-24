@@ -177,3 +177,32 @@ Clients appear to others as "First L.". Only the first unread message from a sen
 ```
 
 Rules: only approved and available listings are returned; no email, phone or address fields exist in the response; `relaxed` lists the filters that were dropped (for example `["bedrooms"]`) when nothing matched everything; invalid bodies (empty, over 500 characters, unknown fields) return 400.
+
+## Phase 6 – Reports and admin
+
+### Reports (any logged-in user, 30 writes per minute per IP)
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/reports` | any logged-in user | Body `{targetType: property\|comment\|review\|user, targetId, reason (10-500 chars)}`. 404 if the item is missing or not public, 400 for your own content, 409 if you already have an open report on it. `user` means a broker. |
+
+### Admin (all routes: `requireAuth` + role `admin`, otherwise 401/403)
+
+List endpoints accept `page` and `limit` (max 50) and return `{items, total, page, limit, pages}`.
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/admin/stats` | Counters and the 5 latest audit entries |
+| GET | `/admin/properties?status=` | Listings by approval status (pending first) |
+| POST | `/admin/properties/:id/approve` | Approve, notify the broker, audit `approve_listing` |
+| POST | `/admin/properties/:id/reject` | Body `{reason}` (5-500). Notify the broker, audit `reject_listing` |
+| GET | `/admin/brokers?status=` | Broker verification queue |
+| POST | `/admin/brokers/:id/verify` | Verify, notify, audit `verify_broker` |
+| POST | `/admin/brokers/:id/reject` | Optional body `{reason}`. Audit `reject_broker` |
+| GET | `/admin/users?role=&status=&q=` | Search users |
+| PATCH | `/admin/users/:id/status` | Body `{status: active\|suspended}`. Cannot target yourself or an admin. Suspended users are blocked at login and on every request. Audit `suspend_user` / `activate_user` |
+| GET | `/admin/comments?status=` / `/admin/reviews?status=` | Moderation lists |
+| PATCH | `/admin/comments/:id/status` / `/admin/reviews/:id/status` | Body `{status: visible\|hidden}`. Hiding notifies the author (no text copied) and audits `hide_*` / `unhide_*` |
+| GET | `/admin/reports?status=&targetType=` | Report queue with a short preview of each target |
+| PATCH | `/admin/reports/:id` | Body `{status: resolved\|dismissed}`. Sets `handled_by`, audit `report_resolved` / `report_dismissed` |
+| GET | `/admin/audit-logs?action=` | Newest first. Includes `view_conversation` entries from admin read-only access |

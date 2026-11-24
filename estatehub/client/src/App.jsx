@@ -18,6 +18,14 @@ import Messages from './pages/Messages.jsx';
 import Assistant from './pages/Assistant.jsx';
 import Favorites from './pages/Favorites.jsx';
 import Account from './pages/Account.jsx';
+import AdminLayout from './pages/admin/AdminLayout.jsx';
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import AdminListings from './pages/admin/AdminListings.jsx';
+import AdminBrokers from './pages/admin/AdminBrokers.jsx';
+import AdminUsers from './pages/admin/AdminUsers.jsx';
+import AdminModeration from './pages/admin/AdminModeration.jsx';
+import AdminReports from './pages/admin/AdminReports.jsx';
+import AdminAudit from './pages/admin/AdminAudit.jsx';
 
 const client = (el) => <ProtectedRoute roles={['client']}>{el}</ProtectedRoute>;
 const broker = (el) => <ProtectedRoute roles={['broker']}>{el}</ProtectedRoute>;
@@ -50,6 +58,16 @@ export default function App() {
         <Route path="/messages" element={client(<Messages basePath="/messages" />)} />
         <Route path="/messages/:id" element={client(<Messages basePath="/messages" />)} />
         <Route path="/account" element={client(<Account />)} />
+
+        <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="listings" element={<AdminListings />} />
+          <Route path="brokers" element={<AdminBrokers />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="moderation" element={<AdminModeration />} />
+          <Route path="reports" element={<AdminReports />} />
+          <Route path="audit" element={<AdminAudit />} />
+        </Route>
 
         <Route path="*" element={<NotFound />} />
       </Route>

@@ -5,6 +5,7 @@ import { api } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import Avatar from './Avatar.jsx';
 import ConfirmationDialog from './ConfirmationDialog.jsx';
+import ReportButton from './ReportButton.jsx';
 import { ErrorMessage } from './StateViews.jsx';
 import { timeAgo } from '../utils/format.js';
 
@@ -149,6 +150,7 @@ export default function CommentsSection({ propertyId, brokerId }) {
                 <p className="mt-1 whitespace-pre-line break-words text-gray-800">{c.body}</p>
               )}
 
+              {editing?.id !== c.id && user && !c.canEdit && !c.canDelete && <p className="mt-1"><ReportButton targetType="comment" targetId={c.id} /></p>}
               {editing?.id !== c.id && (c.canEdit || c.canDelete) && (
                 <p className="mt-1 flex gap-3 text-xs">
                   {c.canEdit && (
