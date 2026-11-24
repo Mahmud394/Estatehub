@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { pool, query } = require('../config/db');
 const { ok, AppError } = require('../utils/response');
 const { COOKIE_NAME, cookieOptions, signToken } = require('../middleware/auth');

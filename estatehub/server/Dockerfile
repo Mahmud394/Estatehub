@@ -2,7 +2,7 @@
 FROM node:20-alpine
 WORKDIR /app/server
 COPY server/package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 COPY server/ ./
 COPY database/ /app/database/
 EXPOSE 5000

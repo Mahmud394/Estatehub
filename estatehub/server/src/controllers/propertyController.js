@@ -4,6 +4,7 @@ const { query } = require('../config/db');
 const { ok, AppError } = require('../utils/response');
 const svc = require('../services/propertyService');
 const { UPLOAD_DIR } = require('../middleware/upload');
+const storage = require('../services/storage');
 
 // Fields that change what the public sees. Editing any of them on an approved
 // listing sends it back to "pending" so an admin can re-check it.
@@ -103,15 +104,9 @@ async function remove(req, res, next) {
     const row = await loadOwned(req);
     const images = await svc.imagesFor(row.id);
     await query('DELETE FROM properties WHERE id = ?', [row.id]); // images/comments/favorites cascade
-    for (const img of images) deleteLocalFile(img.url);
+    for (const img of images) await storage.remove(img.url, UPLOAD_DIR);
     return ok(res, null, 'Listing deleted.');
   } catch (err) { next(err); }
-}
-
-function deleteLocalFile(url) {
-  if (!url || !url.startsWith('/uploads/')) return; // external demo images are not ours to delete
-  const file = path.join(UPLOAD_DIR, path.basename(url));
-  fs.unlink(file, () => {});
 }
 
 async function addImages(req, res, next) {
@@ -121,19 +116,20 @@ async function addImages(req, res, next) {
 
     const existing = await svc.imagesFor(row.id);
     if (existing.length + req.files.length > 12) {
-      req.files.forEach((f) => fs.unlink(f.path, () => {}));
+      storage.discardUploads(req.files);
       throw new AppError(400, 'A listing can have at most 12 images.');
     }
     let order = existing.length;
     for (const [i, file] of req.files.entries()) {
       const isPrimary = existing.length === 0 && i === 0 ? 1 : 0;
+      const url = await storage.save(file);
       await query('INSERT INTO property_images (property_id, image_url, is_primary, sort_order) VALUES (?,?,?,?)', [
-        row.id, `/uploads/${file.filename}`, isPrimary, order++,
+        row.id, url, isPrimary, order++,
       ]);
     }
     return ok(res, await svc.imagesFor(row.id), 'Images uploaded.', 201);
   } catch (err) {
-    if (req.files) req.files.forEach((f) => fs.unlink(f.path, () => {}));
+    storage.discardUploads(req.files);
     next(err);
   }
 }
@@ -146,7 +142,7 @@ async function removeImage(req, res, next) {
     ]);
     if (!img) throw new AppError(404, 'Image not found.');
     await query('DELETE FROM property_images WHERE id = ?', [img.id]);
-    deleteLocalFile(img.image_url);
+    await storage.remove(img.image_url, UPLOAD_DIR);
     if (img.is_primary) {
       await query('UPDATE property_images SET is_primary = 1 WHERE property_id = ? ORDER BY sort_order ASC, id ASC LIMIT 1', [row.id]);
     }

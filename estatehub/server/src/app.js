@@ -9,6 +9,9 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+// Behind Vercel's proxy the real visitor IP is in X-Forwarded-For (needed for the rate limiters)
+if (process.env.VERCEL) app.set('trust proxy', 1);
+
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(
   cors({
