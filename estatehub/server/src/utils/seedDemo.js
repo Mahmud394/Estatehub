@@ -19,6 +19,10 @@ const properties = [
   ['Hillside View Apartment', 'Top-floor apartment with city and hill views. ', 'apartment', 'sale', 9800000, 1700, 3, 3, 'Chattogram', 'Khulshi', 'ctg6'],
   ['Spacious Family Flat', 'Well-ventilated flat close to schools and markets. ', 'apartment', 'rent', 35000, 1500, 3, 2, 'Sylhet', 'Zindabazar', 'syl7'],
   ['Office Floor in Business District', 'Open-plan office floor with parking. ', 'commercial', 'sale', 42000000, 4200, null, 3, 'Dhaka', 'Mirpur', 'office8'],
+  ['Luxury Duplex Apartment', 'Modern duplex apartment with rooftop access and 24-hour security.', 'apartment', 'sale', 18500000, 2400, 4, 3, 'Dhaka', 'Mirpur', 'duplex8'],
+  ['Modern Office Space', 'Fully furnished office space with central air conditioning and elevator facilities.', 'commercial', 'rent', 85000, 2000, null, 2, 'Dhaka', 'Uttara', 'office9'],
+  ['Modern Family Apartment', 'Beautiful apartment with spacious rooms, balcony and nearby shopping facilities.', 'apartment', 'sale', 12500000, 1900, 3, 3, 'Sylhet', 'Zindabazar', 'syl10'],
+  ['Luxury Family House', 'Beautiful two-storey house with a garden, spacious rooms and private parking.', 'house', 'sale', 22000000, 2800, 4, 3, 'Chattogram', 'Khulshi', 'ctg11'],
 ];
 
 async function seed() {
