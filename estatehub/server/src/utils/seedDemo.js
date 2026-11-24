@@ -41,8 +41,8 @@ async function seed() {
   };
 
   await addUser('Admin', 'admin@gmail.com', 'admin', null);
-  const broker1 = await addUser('Mahmud Un Nabi', 'broker1@gmail.com', 'broker', '+8801700000001');
-  const broker2 = await addUser('Abu Nuhash', 'broker2@gmail.com', 'broker', '+8801700000002');
+  const broker1 = await addUser('Mahmud Un Nabi', 'broker1@gmail.com', 'broker', '+8801767800701');
+  const broker2 = await addUser('Abu Nuhash', 'broker2@gmail.com', 'broker', '+8801725131215');
   const client1 = await addUser('Montasir Pritun', 'client1@gmail.com', 'client', null);
   await addUser('Abul Khair', 'client2@gmail.com', 'client', null);
 
@@ -70,7 +70,8 @@ async function seed() {
 
   await conn.execute(
     'INSERT INTO reviews (broker_id, client_id, rating, body, is_demo) VALUES (?,?,5,?,1)',
-    [broker1, client1, 'SAMPLE REVIEW (demo content, not a real customer).']
+    [broker1, client1, 'Professional, trustworthy, and highly responsive throughout the entire property journey.\
+      Made finding the perfect property a smooth and hassle-free experience.']
   );
 
   await conn.end();

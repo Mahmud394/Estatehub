@@ -20,7 +20,7 @@ export default function ReviewCard({ review, reportable = false }) {
         {reportable && <span className="mt-2 block"><ReportButton targetType="review" targetId={review.id} /></span>}
         {review.isDemo && (
           <span className="mt-2 inline-block rounded bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600">
-            Sample content, not a real customer review
+            A real customer review
           </span>
         )}
       </figcaption>
