@@ -4,7 +4,7 @@ const ai = require('../services/aiService');
 // POST /api/ai/chat   body: { message, context? }
 async function chat(req, res, next) {
   try {
-    const result = await ai.chat({ message: req.body.message, context: req.body.context });
+    const result = await ai.chat({ message: req.body.message, context: req.body.context, apply: req.body.apply });
     ok(res, result);
   } catch (err) { next(err); }
 }

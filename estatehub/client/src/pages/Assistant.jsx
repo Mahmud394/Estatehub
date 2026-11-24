@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Send, Sparkles, RotateCcw, MapPin } from 'lucide-react';
+import { Send, Sparkles, RotateCcw, MapPin, Star } from 'lucide-react';
 import { api } from '../services/api.js';
 import { formatPrice, formatSize, CATEGORY_LABELS } from '../utils/format.js';
 import { getPropertyCardImage } from '../utils/propertyImages.js';
@@ -8,13 +8,14 @@ import { getPropertyCardImage } from '../utils/propertyImages.js';
 const STARTERS = [
   '3 bedroom apartment for sale in Uttara',
   'Flat for rent under 30000',
-  'Show me land for sale',
+  'Which areas do you have?',
+  'Best brokers',
   'How do I contact a broker?',
 ];
 
 const WELCOME = {
   role: 'assistant',
-  text: 'Hello! I am EstateAI. Describe the property you want (type, place, budget, bedrooms) and I will search the real listings on EstateHub. You can also ask how the site works.',
+  text: 'Hello! I am EstateAI. Describe the property you want (type, place, budget, bedrooms) and I will search the real listings on EstateHub. You can also ask about prices, areas, brokers, katha to sq ft, or how the site works. If something is not available I will tell you honestly.',
 };
 
 // "What I understood": the filters of the last search, as readable chips.
@@ -55,6 +56,23 @@ function ResultCard({ p }) {
   );
 }
 
+function BrokerCard({ b }) {
+  return (
+    <li>
+      <Link to={`/brokers/${b.id}`} className="flex items-center justify-between gap-3 rounded border border-gray-200 bg-white p-3 hover:border-forest">
+        <span className="min-w-0">
+          <span className="block truncate text-sm font-semibold text-gray-900">{b.name}</span>
+          <span className="block truncate text-xs text-gray-600">{b.companyName || 'Verified broker'} · {b.listings} listing{b.listings === 1 ? '' : 's'}</span>
+        </span>
+        <span className="flex flex-none items-center gap-1 text-sm text-gray-800">
+          <Star className="h-4 w-4 text-gold" aria-hidden="true" />
+          {b.averageRating === null ? 'No reviews' : `${b.averageRating} (${b.reviewCount})`}
+        </span>
+      </Link>
+    </li>
+  );
+}
+
 // EstateAI chat. The server finds the properties (real database rows); this page only displays them.
 export default function Assistant() {
   const [messages, setMessages] = useState([WELCOME]);
@@ -68,13 +86,15 @@ export default function Assistant() {
   useEffect(() => { api('/ai/status').then((d) => setMode(d.mode)).catch(() => {}); }, []);
   useEffect(() => { bottomRef.current?.scrollIntoView({ block: 'end' }); }, [messages, busy]);
 
-  const send = async (raw) => {
+  // `exact` is set for suggestion buttons that carry real filters: the server searches with them directly.
+  const send = async (raw, exact) => {
     const message = (raw ?? text).trim();
     if (!message || busy) return;
     setError(''); setText(''); setBusy(true);
     setMessages((m) => [...m, { role: 'user', text: message }]);
     try {
-      const d = await api('/ai/chat', { method: 'POST', body: { message, context } });
+      const body = exact ? { message, context: exact, apply: true } : { message, context };
+      const d = await api('/ai/chat', { method: 'POST', body });
       setContext(d.filters || {});
       setMessages((m) => [...m, { role: 'assistant', text: d.reply, data: d }]);
     } catch (err) {
@@ -116,6 +136,12 @@ export default function Assistant() {
                   </div>
                 )}
 
+                {m.data?.brokers?.length > 0 && (
+                  <ul className="mt-3 space-y-2">
+                    {m.data.brokers.map((b) => <BrokerCard key={b.id} b={b} />)}
+                  </ul>
+                )}
+
                 {m.data && m.data.listings.length > 0 && (
                   <ul className="mt-3 space-y-2">
                     {m.data.listings.map((p) => <ResultCard key={p.id} p={p} />)}
@@ -140,12 +166,15 @@ export default function Assistant() {
         <div className="border-t border-gray-200 p-3">
           {error && <p role="alert" className="mb-2 rounded bg-red-50 p-2 text-sm text-red-800">{error}</p>}
           <ul className="mb-2 flex flex-wrap gap-2" aria-label="Suggested messages">
-            {suggestions.map((s) => (
-              <li key={s}>
-                <button onClick={() => (s === 'Start over' ? reset() : send(s))} disabled={busy}
-                  className="rounded-full border border-gray-300 bg-white px-3 py-1 text-xs hover:border-forest disabled:opacity-50">{s}</button>
-              </li>
-            ))}
+            {suggestions.map((s) => {
+              const label = typeof s === 'string' ? s : s.label; // a suggestion is plain text or { label, filters }
+              return (
+                <li key={label}>
+                  <button onClick={() => (label === 'Start over' ? reset() : send(label, typeof s === 'string' ? undefined : s.filters))} disabled={busy}
+                    className="rounded-full border border-gray-300 bg-white px-3 py-1 text-xs hover:border-forest disabled:opacity-50">{label}</button>
+                </li>
+              );
+            })}
           </ul>
           <form onSubmit={(e) => { e.preventDefault(); send(); }} className="flex gap-2">
             <label htmlFor="ai-input" className="sr-only">Message to EstateAI</label>
@@ -160,7 +189,7 @@ export default function Assistant() {
       </div>
 
       <p className="mt-3 text-xs text-gray-500">
-        EstateAI only shows listings that are approved and available on EstateHub. It cannot give legal or financial advice, so always check the details with the broker.
+        EstateAI only uses listings that are approved and available on EstateHub, so prices and averages come only from this site, not the whole market. It cannot give legal or financial advice, so always check the details with the broker.
         {mode === 'llm'
           ? ' Smart mode is on: the text you type here is sent to an AI service to understand it, so please do not type personal information.'
           : mode === 'rules' ? ' Running in basic mode: your messages are understood on our own server and are not sent to any AI service.' : ''}
