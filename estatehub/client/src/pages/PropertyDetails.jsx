@@ -6,6 +6,7 @@ import FavoriteButton from '../components/FavoriteButton.jsx';
 import ContactBrokerForm from '../components/ContactBrokerForm.jsx';
 import CommentsSection from '../components/CommentsSection.jsx';
 import Stars from '../components/Stars.jsx';
+import ReportButton from '../components/ReportButton.jsx';
 import PropertyCard from '../components/PropertyCard.jsx';
 import Avatar from '../components/Avatar.jsx';
 import { LoadingSpinner, ErrorMessage } from '../components/StateViews.jsx';
@@ -95,6 +96,7 @@ export default function PropertyDetails() {
             {!notPublic && <FavoriteButton propertyId={p.id} label />}
           </div>
           <p className="mt-2 flex items-center gap-1 text-gray-600"><MapPin className="h-4 w-4" aria-hidden="true" />{p.area}, {p.city}</p>
+          {!notPublic && <div className="mt-2"><ReportButton targetType="property" targetId={p.id} label="Report this listing" /></div>}
 
           <dl className="mt-6 grid grid-cols-2 gap-4 rounded border border-gray-200 bg-white p-4 sm:grid-cols-4">
             <div><dt className="flex items-center gap-1 text-xs text-gray-500"><Ruler className="h-4 w-4" aria-hidden="true" />Size</dt><dd className="font-semibold">{formatSize(p.size)}</dd></div>

@@ -26,7 +26,11 @@ const MENU = {
     { to: '/broker/comments', label: 'Comments' },
     { to: '/broker/profile', label: 'Profile settings' },
   ],
-  admin: [],
+  admin: [
+    { to: '/admin', label: 'Admin dashboard' },
+    { to: '/admin/reports', label: 'Reports' },
+    { to: '/admin/audit', label: 'Audit log' },
+  ],
 };
 
 export default function Navbar() {

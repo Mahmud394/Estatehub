@@ -2,7 +2,7 @@
 
 Smart real estate marketplace (React + Express + MySQL). University Software Engineering capstone project.
 
-**Status:** Phase 5 of 6 complete (EstateAI assistant with rule-based mode and optional LLM, on top of comments, messaging, favorites, reviews and notifications).
+**Status:** All 6 phases complete (admin dashboard, moderation and reports, on top of EstateAI, comments, messaging, favorites, reviews and notifications).
 
 ## Folder structure
 
@@ -17,7 +17,7 @@ estatehub/
 │   └── src/
 │       ├── main.jsx
 │       ├── App.jsx
-│       ├── hooks/          useApi.js, useMediaQuery.js, usePolling.js
+│       ├── hooks/          useApi.js, useMediaQuery.js, usePolling.js, usePagedAdmin.js
 │       ├── services/api.js
 │       ├── styles/index.css
 │       ├── context/        AuthContext.jsx, FavoritesContext.jsx
@@ -27,7 +27,10 @@ estatehub/
 │       │                   ProtectedRoute, ConfirmationDialog, StateViews (Loading/Empty/Error),
 │       │                   PropertyOrbit, PropertySearchBar, BrokerCard, ReviewCard, Stars, Avatar, Reveal,
 │       │                   NotificationBell, FavoriteButton, CommentsSection, ContactBrokerForm,
-│       │                   MessagesView, ReviewsSection, RatingSummary, StarRatingInput
+│       │                   MessagesView, ReviewsSection, RatingSummary, StarRatingInput,
+│       │                   ReportButton, AdminBits
+│       ├── pages/admin/    AdminLayout, AdminDashboard, AdminListings, AdminBrokers, AdminUsers,
+│       │                   AdminModeration, AdminReports, AdminAudit
 │       └── pages/          Home, Login, Register, Properties, PropertyDetails, Brokers, Messages, Favorites, Account, Assistant,
 │                           BrokerPublicProfile, StaticPage (About/Terms/Privacy), NotFound,
 │                           broker/ (BrokerDashboard, PropertyForm, BrokerProfile, BrokerComments)
@@ -138,9 +141,7 @@ Restart both servers, then:
 2. Click a listing: gallery, details, broker card and similar properties.
 3. Log in as `broker1@gmail.com` / `Demo@12345`. The account menu now has **My dashboard**.
 4. **Add property**: fill the form. The listing is created as *pending* and you are taken to the edit page to upload photos. It does **not** appear on `/properties` yet (only approved ones do).
-5. Approve it manually (the admin dashboard arrives in Phase 6). In MySQL:
-   `UPDATE estatehub.properties SET approval_status='approved' WHERE title='YOUR TITLE';`
-   It now shows on `/properties`.
+5. Approve it as an admin: log in as `admin@gmail.com` and open **Admin → Listings** (Phase 6). It now shows on `/properties`.
 6. Edit the approved listing's price: it goes back to *pending* (re-approval workflow).
 7. Log in as `broker2@gmail.com` and open `/broker`. You cannot see or edit broker1's listings.
 8. Register a new buyer account. Visiting `/broker` redirects away, and the API returns 403 for broker actions.
@@ -238,6 +239,39 @@ Restart the server. The assistant page shows which mode is active. If the model 
 
 `node --test tests/ai.unit.test.js` (no database, no internet) checks the parser, the filter cleaning, both LLM request formats, every failure path and the follow-up logic. `npm test` (needs MySQL) also runs `tests/ai.test.js`, which proves that only approved, available listings are returned and nothing private leaks.
 
+## Try Phase 6 (admin, moderation, reports)
+
+**No database changes** and **no new packages**. Restart both servers.
+
+1. Log in as `admin@gmail.com` / `Demo@12345`. The account menu shows **Admin dashboard**; `/admin` has counters and recent activity.
+2. As `broker1@gmail.com` add a listing, then as admin open **Listings**, filter *pending* and **Approve** it (or **Reject** with a reason; the broker gets a bell notification and an email if SMTP is on).
+3. **Brokers:** verify or reject a broker. Only verified brokers can be messaged or reviewed.
+4. **Users:** suspend `client2@gmail.com`. Their open session stops working at once and login returns 403. Activate them again. You cannot suspend yourself or another admin.
+5. As `client1@gmail.com` open a listing and click **Report this listing** (also available on comments, reviews and broker pages). Reports need 10-500 characters, you cannot report your own content, and a duplicate open report is refused.
+6. As admin open **Reports**, click the link to the item, hide it in **Comments & reviews** if needed, then **Mark resolved** or **Dismiss**.
+7. Hidden comments and reviews disappear from public pages, the author cannot edit them, and the author is told (without repeating their text).
+8. **Audit log** lists every admin action, including each time an admin opens a private conversation (read-only).
+
+### Security notes (Phase 6)
+
+- Every `/api/admin/*` route is behind `requireAuth` + `requireRole('admin')` on the server. Hiding menu links is only cosmetic.
+- Admin actions use fixed, validated values (zod), parameterized SQL, and write to `audit_logs` through `services/auditService.js`.
+- The reporter's name is shown to admins only. Notifications and emails never contain comment, review or message text.
+
+### Tests
+
+`npm test` (needs MySQL) runs `tests/admin.test.js`: 401/403 for non-admins on every admin route, approve/reject with audit rows, broker verification, hide/unhide, suspension, and the full report flow. `node --test tests/admin.unit.test.js` runs the database-free validation checks.
+
+### Optional: Docker
+
+```
+copy .env.docker.example .env        (then edit the two values)
+docker compose up --build
+docker compose exec server npm run db:init      (first time only: tables + demo data)
+```
+
+Open http://localhost:8080. Files: `docker-compose.yml`, `server/Dockerfile`, `client/Dockerfile`, `client/nginx.conf`, `.dockerignore`. This is for demos, not a hardened production setup.
+
 ## Design decisions (Phase 3)
 
 - **Orbit math:** each card sits on an ellipse (`x = cos(a)·rx`, `y = sin(a)·ry`). One animation loop updates only `transform` and `opacity`, so the page never reflows. See the comment at the top of `PropertyOrbit.jsx`: it is written to be explained in a defense.
@@ -263,4 +297,4 @@ Restart the server. The assistant page shows which mode is active. If the model 
 - [x] Phase 3 – Homepage + circular property orbit
 - [x] Phase 4 – Comments, messaging, favorites, reviews, email
 - [x] Phase 5 – EstateAI assistant
-- [ ] Phase 6 – Admin dashboard, tests, docs, Docker
+- [x] Phase 6 – Admin dashboard, moderation, reports, tests, docs, Docker
