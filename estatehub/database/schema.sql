@@ -6,7 +6,7 @@ CREATE DATABASE IF NOT EXISTS estatehub CHARACTER SET utf8mb4 COLLATE utf8mb4_un
 USE estatehub;
 
 SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS audit_logs, reports, notifications, reviews, favorites, messages,
+DROP TABLE IF EXISTS password_resets, audit_logs, reports, notifications, reviews, favorites, messages,
   conversations, comments, property_images, properties, broker_profiles, users;
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -19,6 +19,7 @@ CREATE TABLE users (
   email         VARCHAR(190) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   phone         VARCHAR(30) NULL,
+  google_id     VARCHAR(40) NULL UNIQUE,    -- set when the user signs in with Google
   avatar_url    VARCHAR(500) NULL,
   role          ENUM('client','broker','admin') NOT NULL DEFAULT 'client',
   status        ENUM('active','suspended') NOT NULL DEFAULT 'active',
@@ -212,4 +213,18 @@ CREATE TABLE audit_logs (
   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_audit_admin FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE SET NULL,
   INDEX idx_audit_created (created_at)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------
+-- password_resets: one-time "forgot password" links. Only a SHA-256 hash of the token is stored.
+-- ---------------------------------------------------------------
+CREATE TABLE password_resets (
+  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id     INT UNSIGNED NOT NULL,
+  token_hash  CHAR(64) NOT NULL,
+  expires_at  DATETIME NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_reset_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY uq_reset_token (token_hash),
+  INDEX idx_reset_user (user_id)
 ) ENGINE=InnoDB;

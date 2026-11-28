@@ -100,3 +100,18 @@ Press **Deploy** (or push to GitHub, Vercel redeploys on every push). Then on `h
 - A function can run at most 30 seconds here, and each request body is limited to about 4.5 MB (that is why photos upload one at a time).
 - Free database plans can pause or limit storage. Back up before important demos.
 - Forgot-password and email verification are not built yet. Users who forget a password need an admin to reset it in the database.
+
+
+## Email checklist (if mail does not arrive)
+1. Set `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USER`, `SMTP_PASS` (16-char Gmail App Password), `MAIL_FROM` in **Vercel > Settings > Environment Variables**.
+2. Enter `MAIL_FROM` **without quotes**: `EstateHub <you@gmail.com>`.
+3. Set `CLIENT_URL` to your real site URL (no trailing slash), then **Redeploy**.
+4. Log in as admin > Dashboard > **Send test email**. It tells you exactly what is wrong.
+5. After updating the code, run `npm run db:init:prod` once (adds the `password_resets` table; safe to repeat).
+
+## Continue with Google (optional)
+1. console.cloud.google.com > APIs & Services > Credentials > Create credentials > OAuth client ID > **Web application**.
+2. Authorized JavaScript origins: your Vercel URL (no trailing slash) and `http://localhost:5173`.
+3. Vercel env vars: `GOOGLE_CLIENT_ID` and `VITE_GOOGLE_CLIENT_ID` (both = that client id). Redeploy (Vite reads the second one at build time).
+4. Existing database: run `npm run db:init:prod` once (adds the `users.google_id` column; nothing is deleted).
+5. If the Google consent screen is in "Testing" mode, add your Gmail under Test users.

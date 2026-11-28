@@ -24,6 +24,15 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Password is required.'),
 });
 
+const forgotSchema = z.object({ email });
+const resetSchema = z.object({ token: z.string().regex(/^[a-f0-9]{64}$/, 'Invalid reset link.'), password });
+
+// "Continue with Google": the ID token from Google. role only matters the first time (account creation).
+const googleSchema = z.object({
+  credential: z.string().min(20, 'Missing Google credential.').max(4000),
+  role: z.enum(['client', 'broker']).default('client'),
+});
+
 // Profile update deliberately has no role/status/email fields.
 const profileSchema = z
   .object({
@@ -35,4 +44,4 @@ const profileSchema = z
   })
   .strict(); // unknown keys (like "role") are rejected, not ignored
 
-module.exports = { registerSchema, loginSchema, profileSchema };
+module.exports = { registerSchema, loginSchema, profileSchema, forgotSchema, resetSchema, googleSchema };

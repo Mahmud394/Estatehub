@@ -185,6 +185,17 @@ Run the tests again with `npm test` in `server` (new file: `public.test.js`).
 Brokers must be **verified** before clients can message or review them. For a new broker:
 `UPDATE estatehub.broker_profiles SET verification_status='approved' WHERE user_id=<ID>;`
 
+### Emails the site sends
+| When | Who gets it |
+|---|---|
+| New account (client or broker) | The new user (welcome) |
+| "Forgot password" | The user, with a one-time link valid 30 minutes |
+| New message / comment / review | The broker or listing owner |
+| Admin approves or rejects a listing or broker | The broker |
+
+Admin panel -> Dashboard -> **Send test email** sends a test to your own address and shows the exact reason if it fails.
+Upgrading an existing database: run `npm run db:init:prod` once more (it only adds the new `password_resets` table; nothing is deleted).
+
 ### Email notifications (optional)
 
 Leave `SMTP_HOST` empty in `server/.env` and emails are simply skipped (in-app notifications still work). To test emails use a free inbox such as Ethereal or Mailtrap, or Gmail with an *app password*, then fill `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` and run:

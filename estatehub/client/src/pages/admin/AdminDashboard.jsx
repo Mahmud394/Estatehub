@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../../services/api.js';
 import { useApi } from '../../hooks/useApi.js';
 import { ErrorMessage, LoadingSpinner } from '../../components/StateViews.jsx';
 import { formatDate } from '../../utils/format.js';
@@ -13,6 +15,32 @@ const CARDS = [
   { key: 'hiddenComments', label: 'Hidden comments', to: '/admin/moderation' },
   { key: 'hiddenReviews', label: 'Hidden reviews', to: '/admin/moderation' },
 ];
+
+function TestEmail() {
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState(null);
+  const send = async () => {
+    setBusy(true); setResult(null);
+    try {
+      const d = await api('/admin/mail/test', { method: 'POST' });
+      setResult({ ok: true, text: `Sent to ${d.to}. Check the inbox (and spam).` });
+    } catch (err) {
+      setResult({ ok: false, text: err.message });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="mt-8 rounded border border-gray-200 bg-white p-5">
+      <h2 className="text-xl">Email check</h2>
+      <p className="mt-1 text-sm text-gray-600">Sends a test email to your own admin address to confirm SMTP works on this site.</p>
+      <button onClick={send} disabled={busy} className="mt-3 rounded bg-forest px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
+        {busy ? 'Sending…' : 'Send test email'}
+      </button>
+      {result && <p role="status" className={`mt-3 text-sm ${result.ok ? 'text-green-800' : 'text-red-700'}`}>{result.text}</p>}
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
   const { data, error, reload } = useApi('/admin/stats');
@@ -29,6 +57,7 @@ export default function AdminDashboard() {
           </Link>
         ))}
       </div>
+      <TestEmail />
       <h2 className="mt-10 text-2xl">Recent admin activity</h2>
       {data.recentActivity.length === 0 ? <p className="mt-3 text-gray-500">No admin actions yet.</p> : (
         <ul className="mt-3 divide-y divide-gray-200 rounded border border-gray-200 bg-white">

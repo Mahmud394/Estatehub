@@ -8,6 +8,7 @@ const s = require('../validators/adminSchemas');
 router.use(requireAuth, requireRole('admin'));
 
 router.get('/stats', c.stats);
+router.post('/mail/test', c.sendTestMail);
 
 router.get('/properties', validate(s.adminPropertyQuery, 'query'), c.listProperties);
 router.post('/properties/:id(\\d+)/approve', c.approveProperty);

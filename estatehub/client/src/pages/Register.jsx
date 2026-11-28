@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import FormField from '../components/FormField.jsx';
+import GoogleButton from '../components/GoogleButton.jsx';
 import { ErrorMessage } from '../components/StateViews.jsx';
 
 export default function Register() {
@@ -62,6 +63,8 @@ export default function Register() {
           {busy ? 'Creating account…' : 'Create account'}
         </button>
       </form>
+      <GoogleButton role={form.role} onError={setError}
+        onSuccess={(r) => navigate(form.role === 'broker' && r?.created ? '/broker' : '/', { replace: true })} />
       <p className="mt-6 text-sm text-gray-600">
         Already registered? <Link to="/login" className="font-semibold text-forest underline">Log in</Link>
       </p>

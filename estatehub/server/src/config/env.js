@@ -14,6 +14,8 @@ const env = {
     // Cloud MySQL (Aiven, TiDB Cloud, ...) needs an encrypted connection: set DB_SSL=true
     ...(process.env.DB_SSL === 'true' ? { ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false' } } : {}),
   },
+  // "Continue with Google". Empty = the Google button is hidden and the endpoint answers 503.
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   // Email notifications. If SMTP_HOST is empty, emails are skipped (in-app notifications still work).

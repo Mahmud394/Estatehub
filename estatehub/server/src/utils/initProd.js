@@ -16,6 +16,12 @@ async function main() {
     .replace(/DROP TABLE IF EXISTS[^;]*;/gi, '') // never delete existing tables
     .replace(/CREATE TABLE (?!IF NOT EXISTS)/gi, 'CREATE TABLE IF NOT EXISTS ');
   await conn.query(sql);
+  // Upgrade an older database: add users.google_id if it is missing (safe to repeat).
+  const [col] = await conn.query("SELECT 1 FROM information_schema.columns WHERE table_schema = ? AND table_name = 'users' AND column_name = 'google_id'", [env.db.database]);
+  if (!col.length) {
+    await conn.query('ALTER TABLE users ADD COLUMN google_id VARCHAR(40) NULL UNIQUE AFTER phone');
+    console.log('Added users.google_id (needed for "Continue with Google").');
+  }
   const [rows] = await conn.query('SHOW TABLES');
   console.log(`Done. ${rows.length} tables exist in "${env.db.database}". No demo data was added.`);
   console.log('Next: npm run create-admin');

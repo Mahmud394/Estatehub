@@ -292,8 +292,19 @@ async function listAudit(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// Sends a test email to the logged-in admin's own address and reports the real result.
+async function sendTestMail(req, res, next) {
+  try {
+    const result = await mail.sendTestEmail(req.user.email);
+    if (!result.ok) throw new AppError(502, `Test email failed. ${mail.explainMailFailure(result.reason)}`);
+    return ok(res, { to: req.user.email }, `Test email sent to ${req.user.email}. Check the inbox (and spam).`);
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
-  stats, listProperties, approveProperty, rejectProperty, listBrokers, verifyBroker, rejectBroker,
+  sendTestMail, stats, listProperties, approveProperty, rejectProperty, listBrokers, verifyBroker, rejectBroker,
   listUsers, setUserStatus, listComments, listReviews, moderateComment: moderate('comment'), moderateReview: moderate('review'),
   listReports, resolveReport, listAudit,
 };

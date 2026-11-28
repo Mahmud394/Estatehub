@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import FormField from '../components/FormField.jsx';
+import GoogleButton from '../components/GoogleButton.jsx';
 import { ErrorMessage } from '../components/StateViews.jsx';
 
 export default function Login() {
@@ -37,10 +38,12 @@ export default function Login() {
           error={fieldErrors.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
         <FormField id="password" label="Password" type="password" autoComplete="current-password" required value={form.password}
           error={fieldErrors.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        <p className="text-right text-sm"><Link to="/forgot-password" className="text-forest underline">Forgot password?</Link></p>
         <button disabled={busy} className="w-full rounded bg-forest px-4 py-2.5 font-semibold text-white hover:bg-forest/90 disabled:opacity-60">
           {busy ? 'Logging in…' : 'Log in'}
         </button>
       </form>
+      <GoogleButton onSuccess={() => navigate(location.state?.from || '/', { replace: true })} onError={setError} />
       <p className="mt-6 text-sm text-gray-600">
         New to EstateHub? <Link to="/register" className="font-semibold text-forest underline">Create an account</Link>
       </p>

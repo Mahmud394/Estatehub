@@ -40,13 +40,20 @@ export function AuthProvider({ children }) {
     await refresh();
   };
 
+  // Returns { created } so the page can send new brokers to their dashboard.
+  const googleLogin = async (credential, role) => {
+    const data = await api('/auth/google', { method: 'POST', body: { credential, role } });
+    await refresh();
+    return data;
+  };
+
   const logout = async () => {
     await api('/auth/logout', { method: 'POST' });
     apply(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, brokerProfile, loading, login, register, logout, refresh }}>
+    <AuthContext.Provider value={{ user, brokerProfile, loading, login, register, googleLogin, logout, refresh }}>
       {children}
     </AuthContext.Provider>
   );
